@@ -1,9 +1,30 @@
+import { Container } from "react-bootstrap"
+import Header from "./components/Header"
+import Footer from "./components/Footer"
+import HomeScreen from "./screens/HomeScreen";
+import DogListScreen from "./screens/DogListScreen";
+import AccessoryScreen from "./screens/AccessoryScreen";
+import DogScreen from "./screens/DogScreen";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
+import AccessoryListScreen from "./screens/AccessoryListScreen";
 
 function App() {
   return (
-    <>
-      <h1>Welcome to Sfwaggle</h1>
-    </>
+    <Router>
+      <Header />
+      <main className="py-3">
+        <Container>
+          <Routes>
+            <Route path="/" element={<HomeScreen />} />
+            <Route path="/dog-list" element={<DogListScreen />} />
+            <Route path="/dog/:id" element={<DogScreen />} />
+            <Route path="/accessory-list" element={<AccessoryListScreen />} />
+            <Route path="/accessory/:id" element={<AccessoryScreen />} />
+          </Routes>
+        </Container>
+      </main>
+      <Footer />
+    </Router>
   );
 }
 
