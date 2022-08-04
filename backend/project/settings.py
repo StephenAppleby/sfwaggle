@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     # Local
     "accounts",
+    "products",
 ]
 
 SITE_ID = 1
