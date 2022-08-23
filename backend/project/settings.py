@@ -25,8 +25,6 @@ SECRET_KEY = "django-insecure-@o8-67ygeu__cez%yiqqh&^&abyd1^$*s^)k&_t=py8$scrsly
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -156,7 +154,14 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-CORS_ORIGIN_WHITELIST = ("http://localhost:3000", "http://localhost:8000")
+CORS_ORIGIN_WHITELIST = (
+    # Jest uses localhost
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:8000",
+)
+
+ALLOWED_HOSTS = []
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
 

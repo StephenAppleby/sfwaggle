@@ -1,19 +1,14 @@
-import axios from "axios"
 import React, { useState, useEffect } from "react"
 import { Row, Col } from "react-bootstrap"
-// import products from '../products'
 import Product from "../components/Product"
 
 const AccessoryListScreen = () => {
   const [products, setProducts] = useState([])
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { data } = await axios.get("/products")
-      console.log(data)
-      setProducts(data)
-    }
-    fetchProducts()
+    fetch("/api/v1/products/")
+      .then((response) => response.json())
+      .then((data) => setProducts(data))
   }, [])
 
   return (

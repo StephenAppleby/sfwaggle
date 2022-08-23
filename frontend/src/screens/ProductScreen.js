@@ -1,14 +1,19 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Row, Col, Image, ListGroup, Card, Button } from "react-bootstrap"
-import products from "../products"
 import Rating from "../components/Rating"
 
-const AccessoryScreen = () => {
+const ProductScreen = () => {
   const params = useParams()
   const navigate = useNavigate()
 
-  const product = products.find((p) => p._id === params.id)
+  const [product, setProduct] = useState({})
+
+  useEffect(() => {
+    fetch(`/api/v1/product/${params.id}/`)
+      .then((response) => response.json())
+      .then((data) => setProduct(data))
+  }, [])
 
   return (
     <>
@@ -73,4 +78,4 @@ const AccessoryScreen = () => {
   )
 }
 
-export default AccessoryScreen
+export default ProductScreen
