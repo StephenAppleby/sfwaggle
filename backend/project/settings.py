@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "drf_spectacular",
     # Local
+    "core",
     "accounts",
     "products",
 ]
@@ -156,7 +157,7 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_WHITELIST = (
     # Jest uses localhost
-    "http://localhost",
+    # "http://localhost",
     "http://localhost:3000",
     "http://localhost:8000",
 )
@@ -170,3 +171,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Pet shop",
     "VERSION": "1.0.0",
 }
+
+# Media
+MEDIA_ROOT = str(BASE_DIR.joinpath("media"))
+MEDIA_URL = "/media/"
