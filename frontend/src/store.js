@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit"
-import productReducer from "./slices/productSlice"
 import { setupListeners } from "@reduxjs/toolkit/query"
+import productReducer from "./slices/productSlice"
 import { sfwaggleApi } from "./slices/apiSlice"
 
 export const store = configureStore({

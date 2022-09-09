@@ -9,20 +9,25 @@ const ProductListScreen = () => {
   const {
     data: products,
     isLoading,
-    // isFetching,
-    // isSuccess,
-    // isError,
+    isFetching,
+    isSuccess,
+    isError,
     error,
   } = useFetchProductsQuery()
 
   const resolveStatus = () => {
-    if (error) {
-      return <h3>{error}</h3>
+    if (isError) {
+      return (
+        <>
+          <h2>Oh no! Something went wrong...</h2>
+          <h3>{error.status}</h3>
+        </>
+      )
     }
-    if (isLoading) {
+    if (isLoading || isFetching) {
       return <h2>Loading...</h2>
     }
-    if (products) {
+    if (isSuccess) {
       return (
         <Row>
           {products.map((product) => (
