@@ -1,6 +1,6 @@
 import React from "react"
 import { Row, Col } from "react-bootstrap"
-import ErrorDisplay from "../components/ErrorDisplay"
+import Message from "../components/Message"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Product from "../components/Product"
 import { useFetchProductsQuery } from "../slices/apiSlice"
@@ -20,7 +20,7 @@ const ProductListScreen = () => {
       {isFetching ? (
         <LoadingSpinner />
       ) : isError ? (
-        <ErrorDisplay error={error} />
+        <Message variant="danger">{error.error}</Message>
       ) : isSuccess ? (
         <Row>
           {products.map((product) => (

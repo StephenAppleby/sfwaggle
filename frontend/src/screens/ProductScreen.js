@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { Row, Col, Image, ListGroup, Card, Button } from "react-bootstrap"
 import Rating from "../components/Rating"
 import LoadingSpinner from "../components/LoadingSpinner"
-import ErrorDisplay from "../components/ErrorDisplay"
+import Message from "../components/Message"
 import { useFetchProductQuery } from "../slices/apiSlice"
 
 const ProductScreen = () => {
@@ -16,13 +16,17 @@ const ProductScreen = () => {
     error,
   } = useFetchProductQuery(params.pk)
 
+  console.log(error)
+
   const navigate = useNavigate()
   return (
     <>
       {isFetching ? (
         <LoadingSpinner />
       ) : isError ? (
-        <ErrorDisplay error={error} />
+        <Message variant="danger">
+          {error.status} {JSON.stringify(error.data)}
+        </Message>
       ) : isSuccess ? (
         <>
           <Button className="my-3" onClick={() => navigate(-1)}>
@@ -89,7 +93,6 @@ const ProductScreen = () => {
       ) : (
         <h3>Idle</h3>
       )}
-      )
     </>
   )
 }
