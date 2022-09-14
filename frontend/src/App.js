@@ -19,7 +19,7 @@ function App() {
             <Route path="/dog-list" element={<DogListScreen />} />
             <Route path="/dog/:id" element={<DogScreen />} />
             <Route path="/products" element={<ProductListScreen />} />
-            <Route path="/product/:id" element={<ProductScreen />} />
+            <Route path="/product/:pk" element={<ProductScreen />} />
           </Routes>
         </Container>
       </main>
