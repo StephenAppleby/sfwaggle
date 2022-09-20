@@ -6,6 +6,7 @@ import DogListScreen from "./screens/DogListScreen"
 import DogScreen from "./screens/DogScreen"
 import ProductListScreen from "./screens/ProductListScreen"
 import ProductScreen from "./screens/ProductScreen"
+import CartScreen from "./screens/CartScreen"
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 
 function App() {
@@ -20,6 +21,8 @@ function App() {
             <Route path="/dog/:id" element={<DogScreen />} />
             <Route path="/products" element={<ProductListScreen />} />
             <Route path="/product/:pk" element={<ProductScreen />} />
+            <Route path="/cart/:pk" element={<CartScreen />} />
+            <Route path="/cart" element={<CartScreen />} />
           </Routes>
         </Container>
       </main>

@@ -1,13 +1,18 @@
-import React from "react"
+import React, { useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { Row, Col, Image, ListGroup, Card, Button } from "react-bootstrap"
+import { Row, Col, Image, ListGroup, Card, Button, Form } from "react-bootstrap"
 import Rating from "../components/Rating"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
 import { useFetchProductQuery } from "../slices/apiSlice"
+import { addToCart } from "../slices/cartSlice"
+import { useDispatch } from "react-redux"
 
 const ProductScreen = () => {
+  const [qty, setQty] = useState(1)
   const params = useParams()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const {
     data: product,
     isFetching,
@@ -16,9 +21,6 @@ const ProductScreen = () => {
     error,
   } = useFetchProductQuery(params.pk)
 
-  console.log(error)
-
-  const navigate = useNavigate()
   return (
     <>
       {isFetching ? (
@@ -74,9 +76,34 @@ const ProductScreen = () => {
                       </Col>
                     </Row>
                   </ListGroup.Item>
+                  {product.count_in_stock > 0 && (
+                    <ListGroup.Item>
+                      <Row>
+                        <Col>Qty</Col>
+                        <Col>
+                          <Form.Control
+                            as="select"
+                            value={qty}
+                            onChange={(e) => setQty(Number(e.target.value))}
+                          >
+                            {[...Array(product.count_in_stock).keys()].map(
+                              (x) => (
+                                <option key={x + 1} value={x + 1}>
+                                  {x + 1}
+                                </option>
+                              )
+                            )}
+                          </Form.Control>
+                        </Col>
+                      </Row>
+                    </ListGroup.Item>
+                  )}
                   <ListGroup.Item>
                     <Row>
                       <Button
+                        onClick={() =>
+                          dispatch(addToCart({ pk: product.pk, qty: qty }))
+                        }
                         className="btn-block"
                         type="button"
                         disabled={product.count_in_stock === 0}

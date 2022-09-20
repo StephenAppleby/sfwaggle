@@ -5,9 +5,25 @@ from .serializers import ProductSerializer
 
 
 class ProductListView(APIView):
-    def get(self, request):
-        serializer = ProductSerializer(Product.objects.all(), many=True)
-        return Response(serializer.data)
+    def get(self, request, pks=""):
+        if len(pks) == 0:
+            serializer = ProductSerializer(Product.objects.all(), many=True)
+            return Response(serializer.data)
+        else:
+            args = pks.split("&")
+            uuids = []
+            for arg in args:
+                [key, value] = arg.split("=")
+                if key != "pk[]":
+                    raise Exception(
+                        "The only acceptable url argument for products/ is pk[]"
+                    )
+                else:
+                    uuids.append(value)
+            serializer = ProductSerializer(
+                Product.objects.filter(id__in=uuids), many=True
+            )
+            return Response(serializer.data)
 
 
 class ProductView(APIView):

@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 
 
@@ -16,6 +17,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.TextField(max_length=255)
     image = models.ImageField(upload_to="product_images/", blank=True)
     description = models.TextField(max_length=1023)
