@@ -25,6 +25,7 @@ SECRET_KEY = "django-insecure-@o8-67ygeu__cez%yiqqh&^&abyd1^$*s^)k&_t=py8$scrsly
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# ALLOWED_HOSTS = ["http://localhost"]
 
 # Application definition
 
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "dj_rest_auth",
     "dj_rest_auth.registration",
+    "drf_standardized_errors",
     "drf_spectacular",
     # Local
     "core",
@@ -119,6 +121,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Configure dj-rest-auth to use email instead of username
+# https://django-allauth.readthedocs.io/en/latest/advanced.html#custom-user-models
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -149,20 +159,24 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
+        # Browsable api
+        # "rest_framework.authentication.SessionAuthentication",
+        # React frontend
         "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+}
+
+DRF_STANDARDIZED_ERRORS = {
+    "EXCEPTION_FORMATTER_CLASS": "core.exception_formatter.CustomExceptionFormatter"
 }
 
 CORS_ORIGIN_WHITELIST = (
-    # Jest uses localhost
-    # "http://localhost",
     "http://localhost:3000",
     "http://localhost:8000",
 )
 
-ALLOWED_HOSTS = []
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
 
