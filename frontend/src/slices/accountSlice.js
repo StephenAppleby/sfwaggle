@@ -21,8 +21,9 @@ export const login = createAsyncThunk(
     }
   }
 )
-const userDataFromStorage = localStorage.getItem("userData")
-  ? JSON.parse(localStorage.getItem("userData"))
+
+const userDataFromStorage = localStorage.getItem("account")
+  ? JSON.parse(localStorage.getItem("account"))
   : null
 
 const initialState = {
@@ -34,7 +35,12 @@ const initialState = {
 const accountSlice = createSlice({
   name: "account",
   initialState,
-  reducers: {},
+  reducers: {
+    logout(state) {
+      localStorage.removeItem("account")
+      state.user = null
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state, action) => {
@@ -44,7 +50,7 @@ const accountSlice = createSlice({
         state.loading = false
         state.error = null
         state.user = { email: action.meta.arg.email, key: action.payload.key }
-        localStorage.setItem("userData", JSON.stringify(state.user))
+        localStorage.setItem("account", JSON.stringify(state.user))
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false
@@ -53,4 +59,5 @@ const accountSlice = createSlice({
   },
 })
 
+export const { logout } = accountSlice.actions
 export default accountSlice.reducer

@@ -2,8 +2,13 @@ import Container from "react-bootstrap/Container"
 import { LinkContainer } from "react-router-bootstrap"
 import Nav from "react-bootstrap/Nav"
 import Navbar from "react-bootstrap/Navbar"
+import { useDispatch, useSelector } from "react-redux"
+import { NavDropdown } from "react-bootstrap"
+import { logout } from "../slices/accountSlice"
 
 const Header = () => {
+  const dispatch = useDispatch()
+  const account = useSelector((state) => state.account)
   return (
     <header>
       <Navbar bg="light" expand="lg" collapseOnSelect>
@@ -30,9 +35,20 @@ const Header = () => {
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/login">
-                <Nav.Link>
-                  <i className="fas fa-user"></i>Log in
-                </Nav.Link>
+                {account.user ? (
+                  <NavDropdown title={account.user.email} id="username">
+                    <LinkContainer to="/profile">
+                      <NavDropdown.Item>Profile</NavDropdown.Item>
+                    </LinkContainer>
+                    <NavDropdown.Item onClick={() => dispatch(logout())}>
+                      Logout
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                ) : (
+                  <Nav.Link>
+                    <i className="fas fa-user"></i>Log in
+                  </Nav.Link>
+                )}
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>
