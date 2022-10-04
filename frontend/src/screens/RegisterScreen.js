@@ -5,16 +5,19 @@ import { Link, useNavigate } from "react-router-dom"
 import FormContainer from "../components/FormContainer"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
-import { login } from "../slices/accountSlice"
+import { register } from "../slices/accountSlice"
 
-const LoginScreen = () => {
+const RegisterScreen = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [message, setMessage] = useState(null)
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const account = useSelector((state) => state.account)
   const { user } = account
-  const { loading, error } = account.loginState
+  const { loading, error } = account.registerState
 
   const redirect = window.location.search
     ? window.location.search.split("=")[1]
@@ -28,12 +31,24 @@ const LoginScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(login({ email: email, password: password }))
+    if (password !== confirmPassword) {
+      setMessage("Passwords do not match")
+    } else {
+      setMessage("")
+      dispatch(
+        register({
+          email: email,
+          password1: password,
+          password2: confirmPassword,
+        })
+      )
+    }
   }
 
   return (
     <FormContainer>
-      <h1>Sign in</h1>
+      <h1>Sign up</h1>
+      {message && <Message variant="danger">{message}</Message>}
       {error && <Message variant="danger">{error}</Message>}
       {loading && <LoadingSpinner />}
       <Form onSubmit={submitHandler}>
@@ -55,15 +70,24 @@ const LoginScreen = () => {
             onChange={(e) => setPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
+        <Form.Group controlId="confirmPassword">
+          <Form.Label>Confirm password</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Reenter password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
         <Button className="my-3" type="submit" variant="primary">
-          Sign In
+          Sign Up
         </Button>
       </Form>
       <Row className="py-3">
         <Col>
-          New Customer?{" "}
-          <Link to={redirect ? `/register?redirect=${redirect}` : "/register"}>
-            Register
+          Already have an account?{" "}
+          <Link to={redirect ? `/login?redirect=${redirect}` : "/login"}>
+            Log in
           </Link>
         </Col>
       </Row>
@@ -71,4 +95,4 @@ const LoginScreen = () => {
   )
 }
 
-export default LoginScreen
+export default RegisterScreen

@@ -22,13 +22,34 @@ export const login = createAsyncThunk(
   }
 )
 
+export const register = createAsyncThunk(
+  "account/register",
+  async (body, { rejectWithValue }) => {
+    const response = await fetch("/api/v1/dj-rest-auth/registration/", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+    if (response.status === 201) {
+      return await response.json()
+    } else {
+      const data = await response.json()
+      const renderedError = renderErrors(data)
+      return rejectWithValue(renderedError)
+    }
+  }
+)
+
 const userDataFromStorage = localStorage.getItem("account")
   ? JSON.parse(localStorage.getItem("account"))
   : null
 
 const initialState = {
-  loading: false,
-  error: null,
+  loginState: { loading: false, error: null },
+  registerState: { loading: false, error: null },
   user: userDataFromStorage,
 }
 
@@ -44,17 +65,30 @@ const accountSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state, action) => {
-        state.loading = true
+        state.loginState.loading = true
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.loading = false
-        state.error = null
+        state.loginState.loading = false
+        state.loginState.error = null
         state.user = { email: action.meta.arg.email, key: action.payload.key }
         localStorage.setItem("account", JSON.stringify(state.user))
       })
       .addCase(login.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
+        state.loginState.loading = false
+        state.loginState.error = action.payload
+      })
+      .addCase(register.pending, (state, action) => {
+        state.registerState.loading = true
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.registerState.loading = false
+        state.registerState.error = null
+        state.user = { email: action.meta.arg.email, key: action.payload.key }
+        localStorage.setItem("account", JSON.stringify(state.user))
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.registerState.loading = false
+        state.registerState.error = action.payload
       })
   },
 })
