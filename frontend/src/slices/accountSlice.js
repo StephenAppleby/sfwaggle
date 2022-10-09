@@ -6,11 +6,32 @@ export const login = createAsyncThunk(
   async (body, { rejectWithValue }) => {
     const response = await fetch("/api/v1/dj-rest-auth/login/", {
       method: "POST",
-      headers: {
+      headers: new Headers({
         Accept: "application/json",
         "Content-Type": "application/json",
-      },
+      }),
       body: JSON.stringify(body),
+    })
+    if (response.status === 200) {
+      return await response.json()
+    } else {
+      const data = await response.json()
+      const renderedError = renderErrors(data)
+      return rejectWithValue(renderedError)
+    }
+  }
+)
+
+export const logout = createAsyncThunk(
+  "account/logout",
+  async (token, { rejectWithValue }) => {
+    const response = await fetch("/api/v1/dj-rest-auth/logout/", {
+      method: "POST",
+      headers: new Headers({
+        Authorization: "Token " + token,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      }),
     })
     if (response.status === 200) {
       return await response.json()
@@ -27,10 +48,10 @@ export const register = createAsyncThunk(
   async (body, { rejectWithValue }) => {
     const response = await fetch("/api/v1/dj-rest-auth/registration/", {
       method: "POST",
-      headers: {
+      headers: new Headers({
         Accept: "application/json",
         "Content-Type": "application/json",
-      },
+      }),
       body: JSON.stringify(body),
     })
     if (response.status === 201) {
@@ -56,12 +77,7 @@ const initialState = {
 const accountSlice = createSlice({
   name: "account",
   initialState,
-  reducers: {
-    logout(state) {
-      localStorage.removeItem("account")
-      state.user = null
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state, action) => {
@@ -76,6 +92,10 @@ const accountSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loginState.loading = false
         state.loginState.error = action.payload
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.user = null
+        localStorage.removeItem("account")
       })
       .addCase(register.pending, (state, action) => {
         state.registerState.loading = true
@@ -93,5 +113,4 @@ const accountSlice = createSlice({
   },
 })
 
-export const { logout } = accountSlice.actions
 export default accountSlice.reducer
