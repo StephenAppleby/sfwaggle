@@ -7,11 +7,14 @@ class CustomExceptionFormatter(ExceptionFormatter):
         standardized_errors = asdict(error_response)
         standardized_errors["summaries"] = []
         for error in standardized_errors["errors"]:
-            attr = (
-                error["attr"].capitalize() + ": "
-                if error["attr"] != "non_field_errors"
-                else ""
-            )
+            if error["attr"]:
+                attr = (
+                    error["attr"].capitalize() + ": "
+                    if error["attr"] != "non_field_errors"
+                    else ""
+                )
+            else:
+                attr = ""
             detail = error["detail"]
             standardized_errors["summaries"].append(f"{attr}{detail}")
         return standardized_errors
