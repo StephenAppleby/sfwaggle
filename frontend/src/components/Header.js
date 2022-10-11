@@ -41,7 +41,7 @@ const Header = () => {
                       <NavDropdown.Item>Profile</NavDropdown.Item>
                     </LinkContainer>
                     <NavDropdown.Item
-                      onClick={() => dispatch(logout(account.user.key))}
+                      onClick={() => dispatch(logout(account.token))}
                     >
                       Logout
                     </NavDropdown.Item>

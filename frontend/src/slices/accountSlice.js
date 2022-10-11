@@ -64,6 +64,10 @@ export const register = createAsyncThunk(
   }
 )
 
+const tokenFromStorage = localStorage.getItem("token")
+  ? JSON.parse(localStorage.getItem("token"))
+  : null
+
 const userDataFromStorage = localStorage.getItem("account")
   ? JSON.parse(localStorage.getItem("account"))
   : null
@@ -71,7 +75,16 @@ const userDataFromStorage = localStorage.getItem("account")
 const initialState = {
   loginState: { loading: false, error: null },
   registerState: { loading: false, error: null },
+  retrieveState: { loading: false, error: null },
+  token: tokenFromStorage,
   user: userDataFromStorage,
+}
+
+const loginAction = (state, action) => {
+  state.user = { email: action.meta.arg.email }
+  localStorage.setItem("account", JSON.stringify(state.user))
+  state.token = action.payload.key
+  localStorage.setItem("token", JSON.stringify(state.token))
 }
 
 const accountSlice = createSlice({
@@ -86,8 +99,7 @@ const accountSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loginState.loading = false
         state.loginState.error = null
-        state.user = { email: action.meta.arg.email, key: action.payload.key }
-        localStorage.setItem("account", JSON.stringify(state.user))
+        loginAction(state, action)
       })
       .addCase(login.rejected, (state, action) => {
         state.loginState.loading = false
@@ -95,7 +107,9 @@ const accountSlice = createSlice({
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.user = null
+        state.token = null
         localStorage.removeItem("account")
+        localStorage.removeItem("token")
       })
       .addCase(register.pending, (state, action) => {
         state.registerState.loading = true
@@ -103,8 +117,7 @@ const accountSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.registerState.loading = false
         state.registerState.error = null
-        state.user = { email: action.meta.arg.email, key: action.payload.key }
-        localStorage.setItem("account", JSON.stringify(state.user))
+        loginAction(state, action)
       })
       .addCase(register.rejected, (state, action) => {
         state.registerState.loading = false

@@ -39,6 +39,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
     date_joined = models.DateTimeField("date joined", default=timezone.now)
 
+    favourite_color = models.CharField(
+        "favourite color", max_length=64, default="", blank=True
+    )
+
     objects = CustomUserManager()
 
     EMAIL_FIELD = "email"

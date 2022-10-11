@@ -10,9 +10,24 @@ const convertProductListPriceToNumber = (products) => {
   return products.map((product) => convertProductPriceToNumber(product))
 }
 
+// const camelCase = (text) => {
+// }
+
 export const sfwaggleApi = createApi({
   reducerPath: "sfwaggleApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/v1/" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:8000/api/v1/",
+    prepareHeaders: (headers, { getState }) => {
+      const token = getState().account.token
+
+      if (token) {
+        headers.set("authorization", `Token ${token}`)
+      }
+
+      return headers
+    },
+  }),
+  tagTypes: ["UserInfo"],
   endpoints: (builder) => ({
     fetchProducts: builder.query({
       query: (pks) => {
@@ -28,14 +43,30 @@ export const sfwaggleApi = createApi({
       query: (pk) => ({ url: `product/${pk}/` }),
       transformResponse: (product) => convertProductPriceToNumber(product),
     }),
-    fetchStuff: builder.query({ query: () => ({ url: "stuff/" }) }),
-    fetchThing: builder.query({ query: (pk) => ({ url: `thing/${pk}` }) }),
+    fetchUserInfo: builder.query({
+      query: () => ({ url: "dj-rest-auth/user/" }),
+      providesTags: ["UserInfo"],
+      transformResponse: (info) => {
+        return {
+          email: info.email,
+          favouriteColor: info.favourite_color,
+        }
+      },
+    }),
+    updateUserInfo: builder.mutation({
+      query: (data) => ({
+        url: "dj-rest-auth/user/",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["UserInfo"],
+    }),
   }),
 })
 
 export const {
   useFetchProductsQuery,
-  useFetchStuffQuery,
-  useFetchThingQuery,
   useFetchProductQuery,
+  useFetchUserInfoQuery,
+  useUpdateUserInfoMutation,
 } = sfwaggleApi
