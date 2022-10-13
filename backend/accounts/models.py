@@ -1,5 +1,6 @@
 from django.contrib.auth.models import BaseUserManager, PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
+from products.models import CartItem
 from django.utils import timezone
 from django.db import models
 
@@ -38,6 +39,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         "Unselect this instead of deleting accounts.",
     )
     date_joined = models.DateTimeField("date joined", default=timezone.now)
+
+    cart_items = models.ManyToManyField(CartItem)
 
     favourite_color = models.CharField(
         "favourite color", max_length=64, default="", blank=True

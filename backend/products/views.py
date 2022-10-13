@@ -1,29 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from .models import Product
-from .serializers import ProductSerializer
+from .serializers import CartItemSerializer, ProductSerializer
+from rest_framework import status
 
 
 class ProductListView(APIView):
-    def get(self, request, pks=""):
-        if len(pks) == 0:
-            serializer = ProductSerializer(Product.objects.all(), many=True)
-            return Response(serializer.data)
-        else:
-            args = pks.split("&")
-            uuids = []
-            for arg in args:
-                [key, value] = arg.split("=")
-                if key != "pk[]":
-                    raise Exception(
-                        "The only acceptable url argument for products/ is pk[]"
-                    )
-                else:
-                    uuids.append(value)
-            serializer = ProductSerializer(
-                Product.objects.filter(id__in=uuids), many=True
-            )
-            return Response(serializer.data)
+    def get(self, request):
+        # Will need to paginate
+        serializer = ProductSerializer(Product.objects.all(), many=True)
+        return Response(serializer.data)
 
 
 class ProductView(APIView):
@@ -32,16 +19,19 @@ class ProductView(APIView):
         return Response(serializer.data)
 
 
-stuff = [{"pk": 1, "name": "fish"}, {"pk": 2, "name": "moose"}]
+class CartView(APIView):
+    permission_classes = [IsAuthenticated]
 
-
-class MockStuff(APIView):
     def get(self, request):
-        return Response(stuff)
+        cart_items = request.user.cart_items.all()
+        serializer = CartItemSerializer(cart_items, many=True)
+        return Response(serializer.data)
 
-
-class MockThing(APIView):
-    def get(self, request, pk=None):
-        for thing in stuff:
-            if thing["pk"] == pk:
-                return Response(thing)
+    def post(self, request):
+        serializer = CartItemSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            request.user.cart_items.add(serializer.instance)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

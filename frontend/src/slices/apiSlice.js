@@ -10,9 +10,6 @@ const convertProductListPriceToNumber = (products) => {
   return products.map((product) => convertProductPriceToNumber(product))
 }
 
-// const camelCase = (text) => {
-// }
-
 export const sfwaggleApi = createApi({
   reducerPath: "sfwaggleApi",
   baseQuery: fetchBaseQuery({
@@ -30,12 +27,7 @@ export const sfwaggleApi = createApi({
   tagTypes: ["UserInfo"],
   endpoints: (builder) => ({
     fetchProducts: builder.query({
-      query: (pks) => {
-        let path = "products/"
-        return pks
-          ? { url: path + pks.map((pk) => `pk[]=${pk}`).join("&") }
-          : { url: path }
-      },
+      query: () => ({ url: "products/" }),
       transformResponse: (products) =>
         convertProductListPriceToNumber(products),
     }),

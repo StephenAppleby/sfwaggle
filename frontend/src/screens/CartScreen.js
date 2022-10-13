@@ -1,6 +1,5 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useFetchProductsQuery } from "../slices/apiSlice"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
 import { Button, Col, Image, ListGroup, Row, Form, Card } from "react-bootstrap"
@@ -12,13 +11,10 @@ const CartScreen = () => {
   const cartItems = useSelector((state) => state.cart.cartItems)
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const {
-    data: products,
-    isFetching,
-    isSuccess,
-    isError,
-    error,
-  } = useFetchProductsQuery(cartItems.map((item) => item.pk))
+
+  const errorMessages = errors.map((error) => (
+    <Message variant="danger">{error.error}</Message>
+  ))
 
   return (
     <>
@@ -26,7 +22,7 @@ const CartScreen = () => {
       {isFetching ? (
         <LoadingSpinner />
       ) : isError ? (
-        <Message variant="danger">{error.error}</Message>
+        { errorMessages }
       ) : isSuccess ? (
         <Row>
           <Col md={8}>

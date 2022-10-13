@@ -29,3 +29,11 @@ class Product(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+
+class CartItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    qty = models.PositiveIntegerField(default=1, blank=True)
+
+    def __str__(self):
+        return str(self.product.name)
