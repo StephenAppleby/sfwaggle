@@ -5,10 +5,14 @@ import Navbar from "react-bootstrap/Navbar"
 import { useDispatch, useSelector } from "react-redux"
 import { NavDropdown } from "react-bootstrap"
 import { logout } from "../slices/accountSlice"
+import { useFetchCartQuery } from "../slices/apiSlice"
 
 const Header = () => {
   const dispatch = useDispatch()
   const account = useSelector((state) => state.account)
+
+  const { data: cartItems, isSuccess: cartSuccess } = useFetchCartQuery()
+
   return (
     <header>
       <Navbar bg="light" expand="lg" collapseOnSelect>
@@ -31,7 +35,9 @@ const Header = () => {
               </LinkContainer>
               <LinkContainer to="/cart">
                 <Nav.Link>
-                  <i className="fas fa-shopping-cart"></i>Cart
+                  <i className="fas fa-shopping-cart"></i>
+                  Cart
+                  {cartSuccess ? `(${cartItems.length})` : 0}
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/login">

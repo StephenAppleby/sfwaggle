@@ -4,15 +4,20 @@ import { Row, Col, Image, ListGroup, Card, Button, Form } from "react-bootstrap"
 import Rating from "../components/Rating"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
-import { useFetchProductQuery } from "../slices/apiSlice"
-import { addToCart } from "../slices/cartSlice"
+import {
+  useAddToCartMutation,
+  useFetchCartQuery,
+  useFetchProductQuery,
+} from "../slices/apiSlice"
 import { useDispatch } from "react-redux"
+import { useEffect } from "react"
 
 const ProductScreen = () => {
   const [qty, setQty] = useState(1)
   const params = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
   const {
     data: product,
     isFetching,
@@ -20,6 +25,21 @@ const ProductScreen = () => {
     isError,
     error,
   } = useFetchProductQuery(params.pk)
+
+  const { data: cartItems, isSuccess: cartSuccess } = useFetchCartQuery()
+
+  const inCart =
+    cartSuccess &&
+    isSuccess &&
+    cartItems.some((item) => item.product.pk === product.pk)
+
+  useEffect(() => {
+    if (inCart) {
+      setQty(cartItems.find((item) => item.product.pk === product.pk).qty)
+    }
+  }, [inCart])
+
+  const [addToCart] = useAddToCartMutation()
 
   return (
     <>
@@ -85,6 +105,7 @@ const ProductScreen = () => {
                             as="select"
                             value={qty}
                             onChange={(e) => setQty(Number(e.target.value))}
+                            disabled={inCart}
                           >
                             {[...Array(product.count_in_stock).keys()].map(
                               (x) => (
@@ -100,16 +121,28 @@ const ProductScreen = () => {
                   )}
                   <ListGroup.Item>
                     <Row>
-                      <Button
-                        onClick={() =>
-                          dispatch(addToCart({ pk: product.pk, qty: qty }))
-                        }
-                        className="btn-block"
-                        type="button"
-                        disabled={product.count_in_stock === 0}
-                      >
-                        Add to cart
-                      </Button>
+                      {inCart ? (
+                        <Button
+                          onClick={() => navigate("/cart")}
+                          className="btn-block"
+                          type="button"
+                        >
+                          Shopping cart
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={() =>
+                            dispatch(
+                              addToCart({ product: product.pk, qty: qty })
+                            )
+                          }
+                          className="btn-block"
+                          type="button"
+                          disabled={product.count_in_stock === 0}
+                        >
+                          Add to cart
+                        </Button>
+                      )}
                     </Row>
                   </ListGroup.Item>
                 </ListGroup>

@@ -24,7 +24,7 @@ export const sfwaggleApi = createApi({
       return headers
     },
   }),
-  tagTypes: ["UserInfo"],
+  tagTypes: ["userInfo", "cart"],
   endpoints: (builder) => ({
     fetchProducts: builder.query({
       query: () => ({ url: "products/" }),
@@ -37,7 +37,7 @@ export const sfwaggleApi = createApi({
     }),
     fetchUserInfo: builder.query({
       query: () => ({ url: "dj-rest-auth/user/" }),
-      providesTags: ["UserInfo"],
+      providesTags: ["userInfo"],
       transformResponse: (info) => {
         return {
           email: info.email,
@@ -51,7 +51,23 @@ export const sfwaggleApi = createApi({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["UserInfo"],
+      invalidatesTags: ["userInfo"],
+    }),
+    fetchCart: builder.query({
+      query: () => ({ url: "cart/" }),
+      providesTags: ["cart"],
+    }),
+    addToCart: builder.mutation({
+      query: (cartItem) => ({ url: "cart/", method: "POST", body: cartItem }),
+      invalidatesTags: ["cart"],
+    }),
+    updateCartItem: builder.mutation({
+      query: (cartItem) => ({ url: "cart/", method: "PUT", body: cartItem }),
+      invalidatesTags: ["cart"],
+    }),
+    deleteCartItem: builder.mutation({
+      query: (product) => ({ url: "cart/", method: "DELETE", body: product }),
+      invalidatesTags: ["cart"],
     }),
   }),
 })
@@ -61,4 +77,8 @@ export const {
   useFetchProductQuery,
   useFetchUserInfoQuery,
   useUpdateUserInfoMutation,
+  useFetchCartQuery,
+  useAddToCartMutation,
+  useUpdateCartItemMutation,
+  useDeleteCartItemMutation,
 } = sfwaggleApi

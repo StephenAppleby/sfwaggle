@@ -17,7 +17,16 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
 
+class ProductFieldSerializer(serializers.PrimaryKeyRelatedField):
+    def to_representation(self, value):
+        product = Product.objects.get(id=value.pk)
+        serializer = ProductSerializer(product)
+        return serializer.data
+
+
 class CartItemSerializer(serializers.ModelSerializer):
+    product = ProductFieldSerializer(queryset=Product.objects.all())
+
     class Meta:
         model = CartItem
         fields = ["product", "qty"]

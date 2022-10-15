@@ -24,6 +24,11 @@ class Command(BaseCommand):
             email="admin@email.com", password="testpass123"
         )
 
+        # Create testuser
+        get_user_model().objects.create_user(
+            email="testuser@email.com", password="testpass123"
+        )
+
         # Repopulate with data from test fixtures
         FixtureLoader.load_fixtures()
         self.stdout.write(

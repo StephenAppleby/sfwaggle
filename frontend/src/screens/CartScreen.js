@@ -5,16 +5,35 @@ import Message from "../components/Message"
 import { Button, Col, Image, ListGroup, Row, Form, Card } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
-import { removeFromCart, changeCartItemQty } from "../slices/cartSlice"
+import {
+  useDeleteCartItemMutation,
+  useFetchCartQuery,
+  useUpdateCartItemMutation,
+} from "../slices/apiSlice"
+import { useEffect } from "react"
 
 const CartScreen = () => {
-  const cartItems = useSelector((state) => state.cart.cartItems)
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const errorMessages = errors.map((error) => (
-    <Message variant="danger">{error.error}</Message>
-  ))
+  const {
+    data: cartItems,
+    isFetching,
+    isSuccess,
+    isError,
+    error,
+  } = useFetchCartQuery()
+
+  const [updateCartItem] = useUpdateCartItemMutation()
+  const [deleteCartItem] = useDeleteCartItemMutation()
+
+  const account = useSelector((state) => state.account)
+
+  useEffect(() => {
+    if (!account.token) {
+      navigate("/login")
+    }
+  }, [account])
 
   return (
     <>
@@ -22,7 +41,7 @@ const CartScreen = () => {
       {isFetching ? (
         <LoadingSpinner />
       ) : isError ? (
-        { errorMessages }
+        { error }
       ) : isSuccess ? (
         <Row>
           <Col md={8}>
@@ -40,7 +59,7 @@ const CartScreen = () => {
               </Message>
             ) : (
               <ListGroup variant="flush">
-                {products.map((product) => (
+                {cartItems.map(({ product, qty }) => (
                   <ListGroup.Item key={product.pk}>
                     <Row>
                       <Col md={2}>
@@ -60,14 +79,12 @@ const CartScreen = () => {
                       <Col md={2}>
                         <Form.Control
                           as="select"
-                          value={
-                            cartItems.find((item) => item.pk === product.pk).qty
-                          }
+                          value={qty}
                           onChange={(e) =>
                             dispatch(
-                              changeCartItemQty({
-                                pk: product.pk,
-                                newQty: Number(e.target.value),
+                              updateCartItem({
+                                product: product.pk,
+                                qty: e.target.value,
                               })
                             )
                           }
@@ -85,7 +102,9 @@ const CartScreen = () => {
                         <Button
                           type="button"
                           variant="light"
-                          onClick={() => dispatch(removeFromCart(product.pk))}
+                          onClick={() =>
+                            dispatch(deleteCartItem({ product: product.pk }))
+                          }
                         >
                           Remove <i className="fas fa-trash"></i>
                         </Button>
@@ -107,11 +126,8 @@ const CartScreen = () => {
                   $
                   {cartItems
                     .reduce(
-                      (acc, item) =>
-                        acc +
-                        item.qty *
-                          products.find((product) => product.pk === item.pk)
-                            .price,
+                      (acc, cartItem) =>
+                        acc + cartItem.qty * cartItem.product.price,
                       0
                     )
                     .toFixed(2)}
