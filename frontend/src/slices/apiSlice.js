@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { removeCredentials, setCredentials } from "./accountSlice"
 
 const convertProductPriceToNumber = (product) => {
   const price = product.price
@@ -24,8 +25,40 @@ export const sfwaggleApi = createApi({
       return headers
     },
   }),
-  tagTypes: ["userInfo", "cart"],
+  tagTypes: ["userInfo", "cart", "authenticationRequried"],
   endpoints: (builder) => ({
+    register: builder.mutation({
+      query: (body) => ({
+        url: "dj-rest-auth/registration/",
+        method: "POST",
+        body: body,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const { data } = await queryFulfilled
+        dispatch(setCredentials(data))
+      },
+    }),
+    login: builder.mutation({
+      query: (body) => ({
+        url: "dj-rest-auth/login/",
+        method: "POST",
+        body: body,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const { data } = await queryFulfilled
+        dispatch(setCredentials(data))
+      },
+    }),
+    logout: builder.mutation({
+      query: () => ({
+        url: "dj-rest-auth/logout/",
+        method: "POST",
+      }),
+      invalidatesTags: ["authenticationRequried"],
+      async onQueryStarted(arg, { dispatch }) {
+        dispatch(removeCredentials())
+      },
+    }),
     fetchProducts: builder.query({
       query: () => ({ url: "products/" }),
       transformResponse: (products) =>
@@ -37,7 +70,7 @@ export const sfwaggleApi = createApi({
     }),
     fetchUserInfo: builder.query({
       query: () => ({ url: "dj-rest-auth/user/" }),
-      providesTags: ["userInfo"],
+      providesTags: ["userInfo", "authenticationRequried"],
       transformResponse: (info) => {
         return {
           email: info.email,
@@ -55,7 +88,7 @@ export const sfwaggleApi = createApi({
     }),
     fetchCart: builder.query({
       query: () => ({ url: "cart/" }),
-      providesTags: ["cart"],
+      providesTags: ["cart", "authenticationRequried"],
     }),
     addToCart: builder.mutation({
       query: (cartItem) => ({ url: "cart/", method: "POST", body: cartItem }),
@@ -73,6 +106,9 @@ export const sfwaggleApi = createApi({
 })
 
 export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useLogoutMutation,
   useFetchProductsQuery,
   useFetchProductQuery,
   useFetchUserInfoQuery,

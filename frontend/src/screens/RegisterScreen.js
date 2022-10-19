@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 import FormContainer from "../components/FormContainer"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
-import { register } from "../slices/accountSlice"
+import { useRegisterMutation } from "../slices/apiSlice"
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("")
@@ -15,21 +15,21 @@ const RegisterScreen = () => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const account = useSelector((state) => state.account)
-  const { user } = account
-  const { loading, error } = account.registerState
+
+  const token = useSelector((state) => state.account.token)
+  const [register, { isFetching, isError, error }] = useRegisterMutation()
 
   const redirect = window.location.search
     ? window.location.search.split("=")[1]
     : "/"
 
   useEffect(() => {
-    if (user) {
+    if (token) {
       navigate(redirect)
     }
-  }, [user])
+  }, [token])
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault()
     if (password !== confirmPassword) {
       setMessage("Passwords do not match")
@@ -42,6 +42,7 @@ const RegisterScreen = () => {
           password2: confirmPassword,
         })
       )
+      navigate(redirect)
     }
   }
 
@@ -49,8 +50,8 @@ const RegisterScreen = () => {
     <FormContainer>
       <h1>Sign up</h1>
       {message && <Message variant="danger">{message}</Message>}
-      {error && <Message variant="danger">{error}</Message>}
-      {loading && <LoadingSpinner />}
+      {isError && <Message error={error} />}
+      {isFetching && <LoadingSpinner />}
       <Form onSubmit={submitHandler}>
         <Form.Group controlId="email">
           <Form.Label>Email Address</Form.Label>

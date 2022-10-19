@@ -4,14 +4,37 @@ import Nav from "react-bootstrap/Nav"
 import Navbar from "react-bootstrap/Navbar"
 import { useDispatch, useSelector } from "react-redux"
 import { NavDropdown } from "react-bootstrap"
-import { logout } from "../slices/accountSlice"
-import { useFetchCartQuery } from "../slices/apiSlice"
+import {
+  useFetchCartQuery,
+  useFetchUserInfoQuery,
+  useLogoutMutation,
+} from "../slices/apiSlice"
+import { useNavigate } from "react-router-dom"
 
 const Header = () => {
   const dispatch = useDispatch()
-  const account = useSelector((state) => state.account)
+  const navigate = useNavigate()
+  const token = useSelector((state) => state.account.token)
 
-  const { data: cartItems, isSuccess: cartSuccess } = useFetchCartQuery()
+  const skip = !token ? true : false
+
+  const { data: userInfo, isSuccess: userInfoSuccess } = useFetchUserInfoQuery(
+    {},
+    { skip }
+  )
+  const { data: cartItems, isSuccess: cartSuccess } = useFetchCartQuery(
+    {},
+    {
+      skip,
+    }
+  )
+
+  const [logout] = useLogoutMutation()
+
+  const logoutHandler = async () => {
+    dispatch(logout(token))
+    navigate("/")
+  }
 
   return (
     <header>
@@ -41,14 +64,12 @@ const Header = () => {
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/login">
-                {account.user ? (
-                  <NavDropdown title={account.user.email} id="username">
+                {userInfoSuccess ? (
+                  <NavDropdown title={userInfo.email} id="username">
                     <LinkContainer to="/profile">
                       <NavDropdown.Item>Profile</NavDropdown.Item>
                     </LinkContainer>
-                    <NavDropdown.Item
-                      onClick={() => dispatch(logout(account.token))}
-                    >
+                    <NavDropdown.Item onClick={logoutHandler}>
                       Logout
                     </NavDropdown.Item>
                   </NavDropdown>

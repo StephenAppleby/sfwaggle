@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
@@ -16,33 +16,34 @@ const CartScreen = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
+  const token = useSelector((state) => state.account.token)
+
+  useEffect(() => {
+    if (token) {
+    } else {
+      navigate("/login?redirect=/cart")
+    }
+  }, [token])
+
+  const skip = !token ? true : false
+
   const {
     data: cartItems,
     isFetching,
     isSuccess,
     isError,
     error,
-  } = useFetchCartQuery()
+  } = useFetchCartQuery({}, { skip })
 
   const [updateCartItem] = useUpdateCartItemMutation()
   const [deleteCartItem] = useDeleteCartItemMutation()
 
-  const account = useSelector((state) => state.account)
-
-  useEffect(() => {
-    if (!account.token) {
-      navigate("/login")
-    }
-  }, [account])
-
   return (
     <>
       <h1>Shopping cart</h1>
-      {isFetching ? (
-        <LoadingSpinner />
-      ) : isError ? (
-        { error }
-      ) : isSuccess ? (
+      {isFetching && <LoadingSpinner />}
+      {isError && <Message error={error} />}
+      {isSuccess && (
         <Row>
           <Col md={8}>
             {cartItems.length === 0 ? (
@@ -137,7 +138,7 @@ const CartScreen = () => {
                     type="button"
                     className="btn-block"
                     disabled={cartItems.length === 0}
-                    onClick={() => navigate("/login?redirect=shipping")}
+                    onClick={() => navigate("/shipping")}
                   >
                     Proceed to checkout
                   </Button>
@@ -146,8 +147,6 @@ const CartScreen = () => {
             </Card>
           </Col>
         </Row>
-      ) : (
-        <h3>Idle</h3>
       )}
     </>
   )

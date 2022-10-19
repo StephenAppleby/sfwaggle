@@ -1,7 +1,14 @@
 import React from "react"
 import { Alert } from "react-bootstrap"
 
-const Message = ({ variant, children }) => {
+const Message = ({ variant, error, children }) => {
+  if (error) {
+    return error.data.summaries.map((errSum) => (
+      <Alert key={errSum} variant="danger">
+        {errSum}
+      </Alert>
+    ))
+  }
   return <Alert variant={variant}>{children}</Alert>
 }
 

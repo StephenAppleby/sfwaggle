@@ -51,11 +51,9 @@ const ProfileScreen = () => {
           {updateSuccess && (
             <Message variant="success">Profile updated</Message>
           )}
-          {isFetching ? (
-            <LoadingSpinner />
-          ) : isError ? (
-            <Message variant="danger">{error.error}</Message>
-          ) : isSuccess ? (
+          {isFetching && <LoadingSpinner />}
+          {isError && <Message error={error} />}
+          {isSuccess && (
             <Form onSubmit={submitHandler}>
               <Form.Group controlId="email">
                 <Form.Label>Email</Form.Label>
@@ -79,8 +77,6 @@ const ProfileScreen = () => {
                 Update
               </Button>
             </Form>
-          ) : (
-            <h3>Idle</h3>
           )}
         </Col>
       </Row>

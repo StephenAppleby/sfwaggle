@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { Row, Col, Image, ListGroup, Card, Button, Form } from "react-bootstrap"
 import Rating from "../components/Rating"
 import LoadingSpinner from "../components/LoadingSpinner"
@@ -9,7 +9,7 @@ import {
   useFetchCartQuery,
   useFetchProductQuery,
 } from "../slices/apiSlice"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
 
 const ProductScreen = () => {
@@ -17,6 +17,7 @@ const ProductScreen = () => {
   const params = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const location = useLocation()
 
   const {
     data: product,
@@ -26,7 +27,13 @@ const ProductScreen = () => {
     error,
   } = useFetchProductQuery(params.pk)
 
-  const { data: cartItems, isSuccess: cartSuccess } = useFetchCartQuery()
+  const token = useSelector((state) => state.account.token)
+  const skip = !token ? true : false
+
+  const { data: cartItems, isSuccess: cartSuccess } = useFetchCartQuery(
+    {},
+    { skip }
+  )
 
   const inCart =
     cartSuccess &&
@@ -43,13 +50,9 @@ const ProductScreen = () => {
 
   return (
     <>
-      {isFetching ? (
-        <LoadingSpinner />
-      ) : isError ? (
-        <Message variant="danger">
-          {error.status} {JSON.stringify(error.data)}
-        </Message>
-      ) : isSuccess ? (
+      {isFetching && <LoadingSpinner />}
+      {isError && <Message error={error} />}
+      {isSuccess && (
         <>
           <Button className="my-3" onClick={() => navigate(-1)}>
             Go back
@@ -121,7 +124,17 @@ const ProductScreen = () => {
                   )}
                   <ListGroup.Item>
                     <Row>
-                      {inCart ? (
+                      {!token ? (
+                        <Button
+                          onClick={() =>
+                            navigate(`/login?redirect=${location.pathname}`)
+                          }
+                          className="btn-block"
+                          type="button"
+                        >
+                          Log in
+                        </Button>
+                      ) : inCart ? (
                         <Button
                           onClick={() => navigate("/cart")}
                           className="btn-block"
@@ -150,8 +163,6 @@ const ProductScreen = () => {
             </Col>
           </Row>
         </>
-      ) : (
-        <h3>Idle</h3>
       )}
     </>
   )

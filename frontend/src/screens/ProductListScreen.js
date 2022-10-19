@@ -17,11 +17,9 @@ const ProductListScreen = () => {
   return (
     <>
       <h1>Products</h1>
-      {isFetching ? (
-        <LoadingSpinner />
-      ) : isError ? (
-        <Message variant="danger">{error.error}</Message>
-      ) : isSuccess ? (
+      {isFetching && <LoadingSpinner />}
+      {isError && <Message error={error} />}
+      {isSuccess && (
         <Row>
           {products.map((product) => (
             <Col key={product.pk} sm={12} md={6} lg={4} xl={3}>
@@ -29,8 +27,6 @@ const ProductListScreen = () => {
             </Col>
           ))}
         </Row>
-      ) : (
-        <h3>Idle</h3>
       )}
     </>
   )

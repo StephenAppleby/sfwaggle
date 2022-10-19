@@ -1,6 +1,7 @@
-import { configureStore } from "@reduxjs/toolkit"
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/query"
 import accountReducer from "./slices/accountSlice"
+import shippingReducer from "./slices/shippingSlice"
 import { sfwaggleApi } from "./slices/apiSlice"
 
 const preloadedState = {}
@@ -10,9 +11,9 @@ export const store = configureStore({
   reducer: {
     [sfwaggleApi.reducerPath]: sfwaggleApi.reducer,
     account: accountReducer,
+    shipping: shippingReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(sfwaggleApi.middleware),
+  middleware: [...getDefaultMiddleware(), sfwaggleApi.middleware],
 })
 
 setupListeners(store.dispatch)

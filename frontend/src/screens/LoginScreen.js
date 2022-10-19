@@ -5,37 +5,40 @@ import { Link, useNavigate } from "react-router-dom"
 import FormContainer from "../components/FormContainer"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
-import { login } from "../slices/accountSlice"
+import { setCredentials } from "../slices/accountSlice"
+import { useLoginMutation } from "../slices/apiSlice"
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const account = useSelector((state) => state.account)
-  const { user } = account
-  const { loading, error } = account.loginState
+
+  const token = useSelector((state) => state.account.token)
+
+  const [login, { isFetching, isError, error }] = useLoginMutation()
 
   const redirect = window.location.search
     ? window.location.search.split("=")[1]
     : "/"
 
   useEffect(() => {
-    if (user) {
+    if (token) {
       navigate(redirect)
     }
-  }, [user])
+  }, [token])
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault()
     dispatch(login({ email: email, password: password }))
+    navigate(redirect)
   }
 
   return (
     <FormContainer>
       <h1>Sign in</h1>
-      {error && <Message variant="danger">{error}</Message>}
-      {loading && <LoadingSpinner />}
+      {isError && <Message error={error} />}
+      {isFetching && <LoadingSpinner />}
       <Form onSubmit={submitHandler}>
         <Form.Group controlId="email">
           <Form.Label>Email Address</Form.Label>
@@ -43,6 +46,7 @@ const LoginScreen = () => {
             type="email"
             placeholder="Enter email"
             value={email}
+            required
             onChange={(e) => setEmail(e.target.value)}
           ></Form.Control>
         </Form.Group>
@@ -52,6 +56,7 @@ const LoginScreen = () => {
             type="password"
             placeholder="Enter password"
             value={password}
+            required
             onChange={(e) => setPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
