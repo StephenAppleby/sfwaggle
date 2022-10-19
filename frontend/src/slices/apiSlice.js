@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { removeCredentials, setCredentials } from "./accountSlice"
+import { removePaymentMethod } from "./paymentSlice"
+import { removeShippingDetails } from "./shippingSlice"
 
 const convertProductPriceToNumber = (product) => {
   const price = product.price
@@ -57,6 +59,8 @@ export const sfwaggleApi = createApi({
       invalidatesTags: ["authenticationRequried"],
       async onQueryStarted(arg, { dispatch }) {
         dispatch(removeCredentials())
+        dispatch(removeShippingDetails())
+        dispatch(removePaymentMethod())
       },
     }),
     fetchProducts: builder.query({
