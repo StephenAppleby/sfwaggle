@@ -1,8 +1,7 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { useState } from "react"
 import { Button, Col, Form, Row } from "react-bootstrap"
-import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useDispatch } from "react-redux"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
 import {
@@ -12,11 +11,7 @@ import {
 
 const ProfileScreen = () => {
   const [favouriteColor, setFavouriteColor] = useState("")
-  const [message, setMessage] = useState(null)
 
-  const account = useSelector((state) => state.account)
-
-  const navigate = useNavigate()
   const dispatch = useDispatch()
   const [updateUserInfo, { data: updateSuccess }] = useUpdateUserInfoMutation()
 
@@ -28,15 +23,9 @@ const ProfileScreen = () => {
     error,
   } = useFetchUserInfoQuery()
 
-  useEffect(() => {
-    if (!account.token) {
-      navigate("/login")
-    } else {
-      if (user) {
-        setFavouriteColor(user.favouriteColor)
-      }
-    }
-  }, [user, account])
+  if (isSuccess) {
+    setFavouriteColor(user.favouriteColor)
+  }
 
   const submitHandler = (e) => {
     e.preventDefault()

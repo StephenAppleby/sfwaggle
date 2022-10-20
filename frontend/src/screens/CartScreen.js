@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import React from "react"
+import { useDispatch } from "react-redux"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
 import { Button, Col, Image, ListGroup, Row, Form, Card } from "react-bootstrap"
@@ -10,22 +10,10 @@ import {
   useFetchCartQuery,
   useUpdateCartItemMutation,
 } from "../slices/apiSlice"
-import { useEffect } from "react"
 
 const CartScreen = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-
-  const token = useSelector((state) => state.account.token)
-
-  useEffect(() => {
-    if (token) {
-    } else {
-      navigate("/login?redirect=/cart")
-    }
-  }, [token])
-
-  const skip = !token ? true : false
 
   const {
     data: cartItems,
@@ -33,7 +21,7 @@ const CartScreen = () => {
     isSuccess,
     isError,
     error,
-  } = useFetchCartQuery({}, { skip })
+  } = useFetchCartQuery()
 
   const [updateCartItem] = useUpdateCartItemMutation()
   const [deleteCartItem] = useDeleteCartItemMutation()

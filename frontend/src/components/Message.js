@@ -3,8 +3,8 @@ import { Alert } from "react-bootstrap"
 
 const Message = ({ variant, error, children }) => {
   if (error) {
-    return error.data.summaries.map((errSum) => (
-      <Alert key={errSum} variant="danger">
+    return error.data.summaries.map((errSum, index) => (
+      <Alert key={index} variant="danger">
         {errSum}
       </Alert>
     ))

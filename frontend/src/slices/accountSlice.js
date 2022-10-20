@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import { renderErrors } from "../util"
+import { createSlice } from "@reduxjs/toolkit"
 
 const tokenFromStorage = localStorage.getItem("token")
   ? JSON.parse(localStorage.getItem("token"))
@@ -20,7 +19,6 @@ const accountSlice = createSlice({
     removeCredentials: (state, action) => {
       state.token = null
       localStorage.removeItem("token")
-      localStorage.removeItem("shipping")
     },
   },
 })

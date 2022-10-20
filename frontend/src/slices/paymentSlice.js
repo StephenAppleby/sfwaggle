@@ -11,7 +11,6 @@ const paymentSlice = createSlice({
   initialState,
   reducers: {
     addPaymentMethod(state, action) {
-      console.log(action)
       state.paymentMethod = action.payload
       localStorage.setItem("paymentMethod", JSON.stringify(state.paymentMethod))
     },

@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import { useEffect } from "react"
 import { Button, Form } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
@@ -17,14 +16,6 @@ const ShippingScreen = () => {
   const [city, setCity] = useState(shippingDetails.city)
   const [postalCode, setPostalCode] = useState(shippingDetails.postalCode)
   const [country, setCountry] = useState(shippingDetails.country)
-
-  const token = useSelector((state) => state.account.token)
-
-  useEffect(() => {
-    if (!token) {
-      navigate("/login?redirect=/shipping")
-    }
-  }, [token])
 
   const submitHandler = (e) => {
     e.preventDefault()

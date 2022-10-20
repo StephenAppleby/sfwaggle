@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import { useEffect } from "react"
 import { Button, Col, Form } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
@@ -14,17 +13,10 @@ const PaymentScreen = () => {
   const dispatch = useDispatch()
 
   const paymentMethodState = useSelector((state) => state.payment.paymentMethod)
-  const token = useSelector((state) => state.account.token)
 
-  useEffect(() => {
-    if (!token) {
-      navigate("/login?redirect=/shipping")
-    } else {
-      if (paymentMethodState) {
-        setPaymentMethod(paymentMethodState)
-      }
-    }
-  }, [token])
+  if (paymentMethodState) {
+    setPaymentMethod(paymentMethodState)
+  }
 
   const submitHandler = (e) => {
     e.preventDefault()
