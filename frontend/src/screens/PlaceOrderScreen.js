@@ -1,13 +1,19 @@
 import React from "react"
 import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import CheckoutSteps from "../components/CheckoutSteps"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
-import { useFetchCartQuery } from "../slices/apiSlice"
+import RemoveFromCartButton from "../components/RemoveFromCartButton"
+import {
+  useDeleteCartItemMutation,
+  useFetchCartQuery,
+} from "../slices/apiSlice"
 
 const PlaceOrderScreen = () => {
+  const dispatch = useDispatch()
+
   const {
     data: cartItems,
     isSuccess: cartSuccess,
@@ -30,8 +36,16 @@ const PlaceOrderScreen = () => {
 
   const shippingPrice = cartPrice > 100 ? 0 : 12
 
+  const totalPrice = Math.round((cartPrice + shippingPrice) * 100) / 100
+
   const placeOrderHandler = () => {
     console.log("ORDERING")
+  }
+
+  const [deleteCartItem] = useDeleteCartItemMutation()
+
+  const removeCartItemHandler = (pk) => {
+    dispatch(deleteCartItem({ product: pk }))
   }
 
   return (
@@ -62,12 +76,30 @@ const PlaceOrderScreen = () => {
               {cartSuccess && cartEmpty && (
                 <Message>Your cart is empty</Message>
               )}
-              {cartSuccess && cartItems.length > 1 && (
+              {cartSuccess && cartItems.length > 0 && (
                 <ListGroup variant="flush">
+                  <ListGroup.Item>
+                    <Row>
+                      <Col md={2}>
+                        <h5>Item</h5>
+                      </Col>
+                      <Col md={5}></Col>
+                      <Col md={1}>
+                        <h5>Qty</h5>
+                      </Col>
+                      <Col md={1}>
+                        <h5>Price</h5>
+                      </Col>
+                      <Col md={1}>
+                        <h5>Subtotal</h5>
+                      </Col>
+                      <Col md={2}></Col>
+                    </Row>
+                  </ListGroup.Item>
                   {cartItems.map((item, index) => (
                     <ListGroup.Item key={index}>
                       <Row>
-                        <Col md={1}>
+                        <Col md={2}>
                           <Image
                             src={item.product.image}
                             alt={item.product.name}
@@ -75,14 +107,16 @@ const PlaceOrderScreen = () => {
                             rounded
                           />
                         </Col>
-                        <Col>
+                        <Col md={5}>
                           <Link to={`/product/${item.product.pk}`}>
                             {item.product.name}
                           </Link>
                         </Col>
-                        <Col md={4}>
-                          {item.qty} x ${item.product.price}:{" $"}
-                          {item.qty * item.product.price}
+                        <Col md={1}>{item.qty}</Col>
+                        <Col md={1}>${item.product.price}</Col>
+                        <Col md={1}>${item.qty * item.product.price}</Col>
+                        <Col md={2}>
+                          <RemoveFromCartButton product={item.product} />
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -113,7 +147,7 @@ const PlaceOrderScreen = () => {
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
-                  <Col>${cartPrice + shippingPrice}</Col>
+                  <Col>${totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>

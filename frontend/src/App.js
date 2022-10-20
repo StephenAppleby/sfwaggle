@@ -20,6 +20,15 @@ import WrongWayScreen from "./screens/WrongWayScreen"
 function App() {
   const token = useSelector((state) => state.account.token)
 
+  const protectedRoute = (path, element) => {
+    return (
+      <Route
+        path={path}
+        element={token ? element : <WrongWayScreen redirect={path} />}
+      />
+    )
+  }
+
   return (
     <Router>
       <Header />
@@ -35,52 +44,11 @@ function App() {
             <Route path="/products" element={<ProductListScreen />} />
             <Route path="/product/:pk" element={<ProductScreen />} />
             // Protected routes
-            <Route
-              path="/cart"
-              element={
-                token ? <CartScreen /> : <WrongWayScreen redirect="/cart" />
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                token ? (
-                  <ProfileScreen />
-                ) : (
-                  <WrongWayScreen redirect="/profile" />
-                )
-              }
-            />
-            <Route
-              path="/shipping"
-              element={
-                token ? (
-                  <ShippingScreen />
-                ) : (
-                  <WrongWayScreen redirect="/shipping" />
-                )
-              }
-            />
-            <Route
-              path="/payment"
-              element={
-                token ? (
-                  <PaymentScreen />
-                ) : (
-                  <WrongWayScreen redirect="/payment" />
-                )
-              }
-            />
-            <Route
-              path="/placeorder"
-              element={
-                token ? (
-                  <PlaceOrderScreen />
-                ) : (
-                  <WrongWayScreen redirect="/placeorder" />
-                )
-              }
-            />
+            {protectedRoute("/cart", <CartScreen />)}
+            {protectedRoute("/profile", <ProfileScreen />)}
+            {protectedRoute("/shipping", <ShippingScreen />)}
+            {protectedRoute("/payment", <PaymentScreen />)}
+            {protectedRoute("/placeorder", <PlaceOrderScreen />)}
           </Routes>
         </Container>
       </main>

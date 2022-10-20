@@ -10,6 +10,7 @@ import {
   useFetchCartQuery,
   useUpdateCartItemMutation,
 } from "../slices/apiSlice"
+import RemoveFromCartButton from "../components/RemoveFromCartButton"
 
 const CartScreen = () => {
   const navigate = useNavigate()
@@ -88,15 +89,7 @@ const CartScreen = () => {
                         </Form.Control>
                       </Col>
                       <Col md={2}>
-                        <Button
-                          type="button"
-                          variant="light"
-                          onClick={() =>
-                            dispatch(deleteCartItem({ product: product.pk }))
-                          }
-                        >
-                          Remove <i className="fas fa-trash"></i>
-                        </Button>
+                        <RemoveFromCartButton product={product} />
                       </Col>
                     </Row>
                   </ListGroup.Item>
