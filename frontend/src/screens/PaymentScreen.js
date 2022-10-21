@@ -4,30 +4,33 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import CheckoutSteps from "../components/CheckoutSteps"
 import FormContainer from "../components/FormContainer"
+import Message from "../components/Message"
 import { addPaymentMethod } from "../slices/paymentSlice"
 
 const PaymentScreen = () => {
-  const [paymentMethod, setPaymentMethod] = useState("PayPal")
-
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const paymentMethodState = useSelector((state) => state.payment.paymentMethod)
 
-  if (paymentMethodState) {
-    setPaymentMethod(paymentMethodState)
-  }
+  const [paymentMethod, setPaymentMethod] = useState(paymentMethodState)
+  const [message, setMessage] = useState("")
 
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(addPaymentMethod(paymentMethod))
-    navigate("/placeorder")
+    if (!paymentMethod) {
+      setMessage("Please select a payment method")
+    } else {
+      dispatch(addPaymentMethod(paymentMethod))
+      navigate("/placeorder")
+    }
   }
 
   return (
     <FormContainer>
       <CheckoutSteps shipping payment />
       <h1>Payment method</h1>
+      {message && <Message variant="danger">{message}</Message>}
       <Form onSubmit={submitHandler}>
         <Form.Group>
           <Form.Label as="legend">Select payment method</Form.Label>
@@ -38,17 +41,18 @@ const PaymentScreen = () => {
               id="PayPal"
               name="paymentMethod"
               value="PayPal"
-              checked
+              checked={paymentMethod === "PayPal"}
               onChange={(e) => setPaymentMethod(e.target.value)}
             ></Form.Check>
-            {/* <Form.Check
+            <Form.Check
               type="radio"
               label="Stripe"
               id="Stripe"
               name="paymentMethod"
               value="Stripe"
+              checked={paymentMethod === "Stripe"}
               onChange={(e) => setPaymentMethod(e.target.value)}
-            ></Form.Check> */}
+            ></Form.Check>
           </Col>
         </Form.Group>
 

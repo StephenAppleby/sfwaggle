@@ -6,7 +6,6 @@ import { Button, Col, Image, ListGroup, Row, Form, Card } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import {
-  useDeleteCartItemMutation,
   useFetchCartQuery,
   useUpdateCartItemMutation,
 } from "../slices/apiSlice"
@@ -25,7 +24,6 @@ const CartScreen = () => {
   } = useFetchCartQuery()
 
   const [updateCartItem] = useUpdateCartItemMutation()
-  const [deleteCartItem] = useDeleteCartItemMutation()
 
   return (
     <>
@@ -131,7 +129,6 @@ const CartScreen = () => {
       )}
     </>
   )
-  return <div>CartScreen</div>
 }
 
 export default CartScreen

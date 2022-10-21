@@ -27,16 +27,15 @@ const PlaceOrderScreen = () => {
 
   const cartEmpty = cartSuccess ? cartItems.length === 0 : true
 
-  let cartPrice = cartSuccess
+  const cartPrice = cartSuccess
     ? cartItems
         .map((item) => item.qty * item.product.price)
         .reduce((prev, cur) => prev + cur, 0)
     : 0
-  cartPrice = Math.round(cartPrice * 100) / 100
 
   const shippingPrice = cartPrice > 100 ? 0 : 12
 
-  const totalPrice = Math.round((cartPrice + shippingPrice) * 100) / 100
+  const totalPrice = cartPrice + shippingPrice
 
   const placeOrderHandler = () => {
     console.log("ORDERING")
