@@ -6,11 +6,11 @@ from django.db import models
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password=None):
+    def create_user(self, email, password=None, is_staff=False):
         if not email:
             raise ValueError("Users must have an email address")
 
-        user = self.model(email=self.normalize_email(email))
+        user = self.model(email=self.normalize_email(email), is_staff=is_staff)
         user.set_password(password)
         user.save(using=self._db)
         return user

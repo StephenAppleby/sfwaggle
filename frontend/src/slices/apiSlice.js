@@ -106,6 +106,9 @@ export const sfwaggleApi = createApi({
       query: (product) => ({ url: "cart/", method: "DELETE", body: product }),
       invalidatesTags: ["cart"],
     }),
+    placeOrder: builder.mutation({
+      query: (body) => ({ url: "placeorder/", method: "POST", body: body }),
+    }),
   }),
 })
 
@@ -121,4 +124,5 @@ export const {
   useAddToCartMutation,
   useUpdateCartItemMutation,
   useDeleteCartItemMutation,
+  usePlaceOrderMutation,
 } = sfwaggleApi

@@ -6,10 +6,7 @@ import CheckoutSteps from "../components/CheckoutSteps"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
 import RemoveFromCartButton from "../components/RemoveFromCartButton"
-import {
-  useDeleteCartItemMutation,
-  useFetchCartQuery,
-} from "../slices/apiSlice"
+import { useFetchCartQuery, usePlaceOrderMutation } from "../slices/apiSlice"
 
 const PlaceOrderScreen = () => {
   const dispatch = useDispatch()
@@ -27,24 +24,38 @@ const PlaceOrderScreen = () => {
 
   const cartEmpty = cartSuccess ? cartItems.length === 0 : true
 
+  const addDecimals = (num) => (Math.round(num * 100) / 100).toFixed(2)
+
   const cartPrice = cartSuccess
     ? cartItems
         .map((item) => item.qty * item.product.price)
         .reduce((prev, cur) => prev + cur, 0)
     : 0
+  const cartPriceDisplay = addDecimals(cartPrice)
 
   const shippingPrice = cartPrice > 100 ? 0 : 12
+  const shippingPriceDisplay = addDecimals(shippingPrice)
 
-  const totalPrice = cartPrice + shippingPrice
+  const totalPriceDisplay = addDecimals(cartPrice + shippingPrice)
+
+  const [placeOrder] = usePlaceOrderMutation()
 
   const placeOrderHandler = () => {
-    console.log("ORDERING")
-  }
-
-  const [deleteCartItem] = useDeleteCartItemMutation()
-
-  const removeCartItemHandler = (pk) => {
-    dispatch(deleteCartItem({ product: pk }))
+    const order = {
+      items: cartItems.map((item) => {
+        return {
+          qty: item.qty,
+          product: item.product.pk,
+        }
+      }),
+      postal_address: {
+        address: shippingDetails.address,
+        city: shippingDetails.city,
+        postal_code: shippingDetails.postalCode,
+        country: shippingDetails.country,
+      },
+    }
+    dispatch(placeOrder(order))
   }
 
   return (
@@ -134,19 +145,19 @@ const PlaceOrderScreen = () => {
               <ListGroup.Item>
                 <Row>
                   <Col>Items</Col>
-                  <Col>${cartPrice}</Col>
+                  <Col>${cartPriceDisplay}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping</Col>
-                  <Col>${shippingPrice}</Col>
+                  <Col>${shippingPriceDisplay}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
-                  <Col>${totalPrice}</Col>
+                  <Col>${totalPriceDisplay}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
