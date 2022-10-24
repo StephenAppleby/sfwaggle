@@ -20,8 +20,8 @@ class OrderSerializer(serializers.Serializer):
     postal_address = PostalAddressSerializer()
 
     def create(self, validated_data):
-        print(validated_data)
-        order = Order()
+        user = self.context.get("request").user
+        order = Order(submitted_by=user)
         order.save()
         PostalAddress.objects.create(order=order, **validated_data["postal_address"])
         for item in validated_data["items"]:
