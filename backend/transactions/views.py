@@ -9,10 +9,12 @@ class PlaceOrderView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = OrderSerializer(data=request.data, context={"request": request})
-        if serializer.is_valid():
-            serializer.save()
+        serializer_in = OrderSerializer(data=request.data, context={"request": request})
+        if serializer_in.is_valid():
+            order = serializer_in.save()
+            print(serializer_in.data)
+            serializer_out = OrderSerializer(order)
+            print(serializer_out.data)
+            return Response(serializer_out.data, status=status.HTTP_201_CREATED)
         else:
-            print(serializer.errors)
-
-        return Response("Received request, not processed", status=status.HTTP_200_OK)
+            return Response(serializer_in.errors, status=status.HTTP_400_BAD_REQUEST)

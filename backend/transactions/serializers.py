@@ -1,11 +1,15 @@
 from rest_framework import serializers
 from products.models import Product
 from .models import Order, OrderItem, PostalAddress
+from products.serializers import ProductFieldSerializer
 
 
 class OrderItemSerializer(serializers.Serializer):
     qty = serializers.IntegerField(min_value=1, default=1)
-    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    product = ProductFieldSerializer(queryset=Product.objects.all())
+    product_price_at_purchase = serializers.DecimalField(
+        read_only=True, max_digits=6, decimal_places=2
+    )
 
 
 class PostalAddressSerializer(serializers.Serializer):
@@ -16,7 +20,7 @@ class PostalAddressSerializer(serializers.Serializer):
 
 
 class OrderSerializer(serializers.Serializer):
-    items = serializers.ListField(child=OrderItemSerializer(), allow_empty=False)
+    items = OrderItemSerializer(many=True)
     postal_address = PostalAddressSerializer()
 
     def create(self, validated_data):
@@ -27,5 +31,4 @@ class OrderSerializer(serializers.Serializer):
         for item in validated_data["items"]:
             OrderItem.objects.create(order=order, **item)
         order.save()
-        print(order)
         return order

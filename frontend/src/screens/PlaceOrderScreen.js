@@ -38,7 +38,12 @@ const PlaceOrderScreen = () => {
 
   const totalPriceDisplay = addDecimals(cartPrice + shippingPrice)
 
-  const [placeOrder] = usePlaceOrderMutation()
+  const [placeOrder, { data: orderData, isSuccess: orderSuccess }] =
+    usePlaceOrderMutation()
+
+  if (orderSuccess) {
+    console.log(orderData)
+  }
 
   const placeOrderHandler = () => {
     const order = {

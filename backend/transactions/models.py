@@ -48,7 +48,9 @@ class Order(models.Model):
 
 
 class PostalAddress(models.Model):
-    order = models.OneToOneField(Order, on_delete=models.CASCADE, null=True)
+    order = models.OneToOneField(
+        Order, on_delete=models.CASCADE, null=True, related_name="postal_address"
+    )
     address = models.CharField(max_length=255)
     postal_code = models.CharField(max_length=7)
     city = models.CharField(max_length=63)
