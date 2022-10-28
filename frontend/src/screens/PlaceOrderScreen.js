@@ -1,7 +1,7 @@
 import React from "react"
 import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import CheckoutSteps from "../components/CheckoutSteps"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
@@ -10,6 +10,7 @@ import { useFetchCartQuery, usePlaceOrderMutation } from "../slices/apiSlice"
 
 const PlaceOrderScreen = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const {
     data: cartItems,
@@ -44,7 +45,6 @@ const PlaceOrderScreen = () => {
   if (orderSuccess) {
     console.log(orderData)
   }
-
   const placeOrderHandler = () => {
     const order = {
       items: cartItems.map((item) => {
@@ -61,6 +61,8 @@ const PlaceOrderScreen = () => {
       },
     }
     dispatch(placeOrder(order))
+
+    // navigate()
   }
 
   return (

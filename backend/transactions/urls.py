@@ -1,5 +1,7 @@
-from django.urls import path
-
+from rest_framework.routers import SimpleRouter
 from . import views
 
-urlpatterns = [path("placeorder/", views.PlaceOrderView.as_view(), name="placeorder")]
+router = SimpleRouter()
+router.register("orders", views.OrderViewSet, basename="orders")
+
+urlpatterns = router.urls

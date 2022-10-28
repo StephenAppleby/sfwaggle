@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from products.models import Product
 from django.conf import settings
@@ -66,6 +67,7 @@ class PostalAddress(models.Model):
 
 
 class OrderItem(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
