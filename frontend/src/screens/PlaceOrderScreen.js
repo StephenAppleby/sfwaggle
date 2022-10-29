@@ -39,8 +39,15 @@ const PlaceOrderScreen = () => {
 
   const totalPriceDisplay = addDecimals(cartPrice + shippingPrice)
 
-  const [placeOrder, { data: orderData, isSuccess: orderSuccess }] =
-    usePlaceOrderMutation()
+  const [
+    placeOrder,
+    {
+      data: orderData,
+      isSuccess: orderSuccess,
+      isError: orderIsError,
+      error: orderError,
+    },
+  ] = usePlaceOrderMutation()
 
   if (orderSuccess) {
     console.log(orderData)
@@ -68,6 +75,7 @@ const PlaceOrderScreen = () => {
   return (
     <>
       <CheckoutSteps shipping payment placeOrder />
+      {orderIsError && <Message error={orderError} />}
       <Row>
         <Col md={8}>
           <ListGroup variant="flush">

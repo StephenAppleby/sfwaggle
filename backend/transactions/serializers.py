@@ -22,6 +22,7 @@ class PostalAddressSerializer(serializers.Serializer):
 class OrderSerializer(serializers.Serializer):
     items = OrderItemSerializer(many=True)
     postal_address = PostalAddressSerializer()
+    id = serializers.UUIDField(read_only=True)
 
     def create(self, validated_data):
         user = self.context.get("request").user

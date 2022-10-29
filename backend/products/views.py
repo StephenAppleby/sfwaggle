@@ -17,6 +17,8 @@ class ProductListView(APIView):
 class ProductView(APIView):
     def get(self, request, pk=None):
         serializer = ProductSerializer(Product.objects.get(pk=pk))
+        print("PRODUCT")
+        print(serializer.instance.id)
         return Response(serializer.data)
 
 
