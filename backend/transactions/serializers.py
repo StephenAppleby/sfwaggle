@@ -34,11 +34,14 @@ class OrderSerializer(serializers.Serializer):
     paymentStatus = serializers.CharField(
         source="get_payment_status_display", read_only=True
     )
-    totalPrice = serializers.DecimalField(
-        source="get_total_price", read_only=True, max_digits=6, decimal_places=2
+    itemsPrice = serializers.DecimalField(
+        source="get_items_price", read_only=True, max_digits=6, decimal_places=2
     )
     shippingPrice = serializers.DecimalField(
         source="get_shipping_price", read_only=True, max_digits=6, decimal_places=2
+    )
+    totalPrice = serializers.DecimalField(
+        source="get_total_price", read_only=True, max_digits=6, decimal_places=2
     )
     items = OrderItemSerializer(many=True)
     postalAddress = PostalAddressSerializer(source="postal_address")

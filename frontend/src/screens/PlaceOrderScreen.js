@@ -4,6 +4,7 @@ import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 import CheckoutSteps from "../components/CheckoutSteps"
+import ItemsSummary from "../components/ItemsSummary"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
 import RemoveFromCartButton from "../components/RemoveFromCartButton"
@@ -52,7 +53,7 @@ const PlaceOrderScreen = () => {
 
   useEffect(() => {
     if (orderSuccess) {
-      navigate(`/orders/${orderData.id}/`)
+      navigate(`/orders/${orderData.pk}/`)
     }
   }, [orderSuccess, navigate, orderData])
 
@@ -64,10 +65,10 @@ const PlaceOrderScreen = () => {
           product: item.product.pk,
         }
       }),
-      postal_address: {
+      postalAddress: {
         address: shippingDetails.address,
         city: shippingDetails.city,
-        postal_code: shippingDetails.postalCode,
+        postalCode: shippingDetails.postalCode,
         country: shippingDetails.country,
       },
     }
@@ -104,51 +105,7 @@ const PlaceOrderScreen = () => {
                 <Message>Your cart is empty</Message>
               )}
               {cartSuccess && cartItems.length > 0 && (
-                <ListGroup variant="flush">
-                  <ListGroup.Item>
-                    <Row>
-                      <Col md={2}>
-                        <h5>Item</h5>
-                      </Col>
-                      <Col md={5}></Col>
-                      <Col md={1}>
-                        <h5>Qty</h5>
-                      </Col>
-                      <Col md={1}>
-                        <h5>Price</h5>
-                      </Col>
-                      <Col md={1}>
-                        <h5>Subtotal</h5>
-                      </Col>
-                      <Col md={2}></Col>
-                    </Row>
-                  </ListGroup.Item>
-                  {cartItems.map((item, index) => (
-                    <ListGroup.Item key={index}>
-                      <Row>
-                        <Col md={2}>
-                          <Image
-                            src={item.product.image}
-                            alt={item.product.name}
-                            fluid
-                            rounded
-                          />
-                        </Col>
-                        <Col md={5}>
-                          <Link to={`/product/${item.product.pk}`}>
-                            {item.product.name}
-                          </Link>
-                        </Col>
-                        <Col md={1}>{item.qty}</Col>
-                        <Col md={1}>${item.product.price}</Col>
-                        <Col md={1}>${item.qty * item.product.price}</Col>
-                        <Col md={2}>
-                          <RemoveFromCartButton product={item.product} />
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
+                <ItemsSummary items={cartItems} isCart />
               )}
             </ListGroup.Item>
           </ListGroup>
