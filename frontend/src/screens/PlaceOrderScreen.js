@@ -1,4 +1,5 @@
 import React from "react"
+import { useEffect } from "react"
 import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
@@ -49,9 +50,12 @@ const PlaceOrderScreen = () => {
     },
   ] = usePlaceOrderMutation()
 
-  if (orderSuccess) {
-    console.log(orderData)
-  }
+  useEffect(() => {
+    if (orderSuccess) {
+      navigate(`/orders/${orderData.id}/`)
+    }
+  }, [orderSuccess, navigate, orderData])
+
   const placeOrderHandler = () => {
     const order = {
       items: cartItems.map((item) => {
@@ -68,8 +72,6 @@ const PlaceOrderScreen = () => {
       },
     }
     dispatch(placeOrder(order))
-
-    // navigate()
   }
 
   return (

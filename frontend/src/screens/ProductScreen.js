@@ -91,15 +91,15 @@ const ProductScreen = () => {
                     <Row>
                       <Col>Status:</Col>
                       <Col>
-                        {product.count_in_stock > 10
+                        {product.countInStock > 10
                           ? "In stock"
-                          : product.count_in_stock > 0
+                          : product.countInStock > 0
                           ? "Low stock"
                           : "Out of stock"}
                       </Col>
                     </Row>
                   </ListGroup.Item>
-                  {product.count_in_stock > 0 && (
+                  {product.countInStock > 0 && (
                     <ListGroup.Item>
                       <Row>
                         <Col>Qty</Col>
@@ -110,7 +110,7 @@ const ProductScreen = () => {
                             onChange={(e) => setQty(Number(e.target.value))}
                             disabled={inCart}
                           >
-                            {[...Array(product.count_in_stock).keys()].map(
+                            {[...Array(product.countInStock).keys()].map(
                               (x) => (
                                 <option key={x + 1} value={x + 1}>
                                   {x + 1}
@@ -151,7 +151,7 @@ const ProductScreen = () => {
                           }
                           className="btn-block"
                           type="button"
-                          disabled={product.count_in_stock === 0}
+                          disabled={product.countInStock === 0}
                         >
                           Add to cart
                         </Button>

@@ -3,6 +3,8 @@ from rest_framework import serializers
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    countInStock = serializers.IntegerField(source="count_in_stock")
+
     class Meta:
         model = Product
         fields = [
@@ -13,7 +15,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "brand",
             "category",
             "price",
-            "count_in_stock",
+            "countInStock",
         ]
 
 

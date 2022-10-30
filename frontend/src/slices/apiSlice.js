@@ -27,7 +27,7 @@ export const sfwaggleApi = createApi({
       return headers
     },
   }),
-  tagTypes: ["userInfo", "cart", "authenticationRequried"],
+  tagTypes: ["userInfo", "cart", "authenticationRequried", "orders"],
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (body) => ({
@@ -113,6 +113,14 @@ export const sfwaggleApi = createApi({
         body: body,
       }),
     }),
+    listOrders: builder.query({
+      query: () => ({ url: "orders/" }),
+      providesTags: ["orders", "authenticationRequried"],
+    }),
+    retrieveOrder: builder.query({
+      query: (pk) => ({ url: `orders/${pk}` }),
+      providesTags: ["orders", "authenticationRequried"],
+    }),
   }),
 })
 
@@ -129,4 +137,6 @@ export const {
   useUpdateCartItemMutation,
   useDeleteCartItemMutation,
   usePlaceOrderMutation,
+  useListOrdersQuery,
+  useRetrieveOrderQuery,
 } = sfwaggleApi
