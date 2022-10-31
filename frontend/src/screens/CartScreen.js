@@ -24,6 +24,7 @@ const CartScreen = () => {
   } = useFetchCartQuery()
 
   const [updateCartItem] = useUpdateCartItemMutation()
+  console.log(cartItems)
 
   return (
     <>
@@ -77,13 +78,11 @@ const CartScreen = () => {
                             )
                           }
                         >
-                          {[...Array(product.count_in_stock).keys()].map(
-                            (x) => (
-                              <option key={x + 1} value={x + 1}>
-                                {x + 1}
-                              </option>
-                            )
-                          )}
+                          {[...Array(product.countInStock).keys()].map((x) => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ))}
                         </Form.Control>
                       </Col>
                       <Col md={2}>

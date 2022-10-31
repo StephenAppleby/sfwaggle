@@ -14,6 +14,7 @@ import { useEffect } from "react"
 
 const ProductScreen = () => {
   const [qty, setQty] = useState(1)
+  const [message, setMessage] = useState("")
   const params = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -28,12 +29,8 @@ const ProductScreen = () => {
   } = useFetchProductQuery(params.pk)
 
   const token = useSelector((state) => state.account.token)
-  const skip = !token ? true : false
 
-  const { data: cartItems, isSuccess: cartSuccess } = useFetchCartQuery(
-    {},
-    { skip }
-  )
+  const { data: cartItems, isSuccess: cartSuccess } = useFetchCartQuery()
 
   const inCart =
     cartSuccess &&
@@ -52,6 +49,7 @@ const ProductScreen = () => {
     <>
       {isFetching && <LoadingSpinner />}
       {isError && <Message error={error} />}
+      {message && <Message variant="success">{message}</Message>}
       {isSuccess && (
         <>
           <Button className="my-3" onClick={() => navigate(-1)}>
@@ -144,11 +142,12 @@ const ProductScreen = () => {
                         </Button>
                       ) : (
                         <Button
-                          onClick={() =>
+                          onClick={() => {
+                            setMessage("Added to cart")
                             dispatch(
                               addToCart({ product: product.pk, qty: qty })
                             )
-                          }
+                          }}
                           className="btn-block"
                           type="button"
                           disabled={product.countInStock === 0}

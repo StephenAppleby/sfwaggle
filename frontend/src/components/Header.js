@@ -32,8 +32,8 @@ const Header = () => {
   const [logout] = useLogoutMutation()
 
   const logoutHandler = async () => {
-    dispatch(logout(token))
     navigate("/")
+    dispatch(logout(token))
   }
 
   return (
