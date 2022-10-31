@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "accounts",
     "products",
     "transactions",
+    "dogs",
 ]
 
 SITE_ID = 1

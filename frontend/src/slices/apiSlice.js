@@ -63,6 +63,10 @@ export const sfwaggleApi = createApi({
         dispatch(removePaymentMethod())
       },
     }),
+    fetchDogs: builder.query({
+      query: () => ({ url: "dogs/" }),
+    }),
+    fetchDog: builder.query({ query: (pk) => ({ url: `dogs/${pk}` }) }),
     fetchProducts: builder.query({
       query: () => ({ url: "products/" }),
       transformResponse: (products) =>
@@ -128,6 +132,8 @@ export const {
   useRegisterMutation,
   useLoginMutation,
   useLogoutMutation,
+  useFetchDogsQuery,
+  useFetchDogQuery,
   useFetchProductsQuery,
   useFetchProductQuery,
   useFetchUserInfoQuery,

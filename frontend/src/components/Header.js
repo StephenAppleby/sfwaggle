@@ -51,7 +51,7 @@ const Header = () => {
                   <i className="fa-solid fa-bone"></i>Products
                 </Nav.Link>
               </LinkContainer>
-              <LinkContainer to="/dog-list">
+              <LinkContainer to="/dogs">
                 <Nav.Link>
                   <i className="fa-solid fa-dog"></i>Dogs
                 </Nav.Link>

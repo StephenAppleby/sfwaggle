@@ -1,4 +1,5 @@
 from products.models import Product, Category, Brand
+from dogs.models import Dog
 
 
 class FixtureLoader:
@@ -93,7 +94,60 @@ class FixtureLoader:
         )
 
     @classmethod
+    def load_dogs(cls):
+        cls.dogs = dict()
+        cls.dogs["Berno"] = Dog.objects.create(
+            name="Berno",
+            image="dog_images/berno.jpg",
+            description="Curious and frank, Berno is a loyal companion. He may not be the most affectionate, but he knows who he loves and will stay by their side no matter what.",
+            for_sale=True,
+            price=560,
+            floofs=12,
+        )
+        cls.dogs["Cassandra"] = Dog.objects.create(
+            name="Cassandra",
+            image="dog_images/cassandra.jpg",
+            description="Cassandra is a fun loving and affectionate husky with the softest, floofiest coat. She is well trained and always comes bounding up when she hears \"Cas! Come!\". Don't be put off by her penetrating stare, her eyes may be mismatched but she's inevitably just day-dreaming about her favourite snack: fish!",
+            for_sale=True,
+            price=600,
+            floofs=21,
+        )
+        cls.dogs["Gallahad"] = Dog.objects.create(
+            name="Gallahad",
+            image="dog_images/gallahad.jpg",
+            description="Timid and shy, this middle aged rover reveals his sweet and goofy nature only to those who persist in getting to know him. He cannot be bought with food, but goes crazy for games and romps with his favorite playmates.",
+            for_sale=True,
+            price=320,
+            floofs=19,
+        )
+        cls.dogs["Gruffles"] = Dog.objects.create(
+            name="Gruffles",
+            image="dog_images/gruffles.jpg",
+            description="Gruffles was the loving companion of his owner Madisson, a sweet old lady who loved him well and sadly passed when he was 3 years old. He is now looking for an owner who can keep up with his love for the outdoors. Favorite hobby: stick fetching.",
+            for_sale=True,
+            price=515,
+            floofs=32,
+        )
+        cls.dogs["Lulu"] = Dog.objects.create(
+            name="Lulu",
+            image="dog_images/lulu.jpg",
+            description="This stout chihuahua is prim and proper until her sharp nose picks up the scent of treats. Then there can only be one thing on her mind! Her gourmand habits make her tractable and willing to go along with any plan, along as she is duly recompensed with snax!",
+            for_sale=True,
+            price=360,
+            floofs=8,
+        )
+        cls.dogs["Poppy"] = Dog.objects.create(
+            name="Poppy",
+            image="dog_images/poppy.jpg",
+            description="Soft tempered and sweet natured, Poppy is the perfect indoors companion pet. Her favourite past times include snuggling up on a lap in the evenings and being cuddled and petted.",
+            for_sale=True,
+            price=460,
+            floofs=18,
+        )
+
+    @classmethod
     def load_fixtures(cls):
         cls.load_categories()
         cls.load_brands()
         cls.load_products()
+        cls.load_dogs()
