@@ -1,13 +1,12 @@
 import React from "react"
 import { useEffect } from "react"
-import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap"
+import { Button, Card, Col, ListGroup, Row } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import CheckoutSteps from "../components/CheckoutSteps"
 import ItemsSummary from "../components/ItemsSummary"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
-import RemoveFromCartButton from "../components/RemoveFromCartButton"
 import { useFetchCartQuery, usePlaceOrderMutation } from "../slices/apiSlice"
 
 const PlaceOrderScreen = () => {

@@ -17,6 +17,7 @@ import PlaceOrderScreen from "./screens/PlaceOrderScreen"
 import { useSelector } from "react-redux"
 import WrongWayScreen from "./screens/WrongWayScreen"
 import OrderScreen from "./screens/OrderScreen"
+import OrderListScreen from "./screens/OrderListScreen"
 
 function App() {
   const token = useSelector((state) => state.account.token)
@@ -51,6 +52,7 @@ function App() {
             {protectedRoute("/payment", <PaymentScreen />)}
             {protectedRoute("/placeorder", <PlaceOrderScreen />)}
             {protectedRoute("/orders/:pk", <OrderScreen />)}
+            {protectedRoute("/orders", <OrderListScreen />)}
           </Routes>
         </Container>
       </main>

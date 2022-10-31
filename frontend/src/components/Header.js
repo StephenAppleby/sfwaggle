@@ -72,6 +72,9 @@ const Header = () => {
                     <NavDropdown.Item onClick={logoutHandler}>
                       Logout
                     </NavDropdown.Item>
+                    <NavDropdown.Item onClick={() => navigate("/orders")}>
+                      Orders
+                    </NavDropdown.Item>
                   </NavDropdown>
                 ) : (
                   <Nav.Link>

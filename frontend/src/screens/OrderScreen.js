@@ -5,6 +5,7 @@ import ItemsSummary from "../components/ItemsSummary"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Message from "../components/Message"
 import { useRetrieveOrderQuery } from "../slices/apiSlice"
+import { capitalize } from "../util"
 
 const OrderScreen = () => {
   const params = useParams()
@@ -18,12 +19,6 @@ const OrderScreen = () => {
   } = useRetrieveOrderQuery(params.pk)
 
   const createdOn = isSuccess ? new Date(order.createdOn) : ""
-  const capitalizedOrderStatus = isSuccess
-    ? order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)
-    : ""
-  const capitalizedPaymentStatus = isSuccess
-    ? order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)
-    : ""
 
   return (
     <>
@@ -48,7 +43,7 @@ const OrderScreen = () => {
               <h2>Payment</h2>
               <Row>
                 <Col md={4}>Status:</Col>
-                <Col md={8}>{capitalizedPaymentStatus}</Col>
+                <Col md={8}>{capitalize(order.paymentStatus)}</Col>
               </Row>
               <Row>
                 <Col md={4}>Items price:</Col>
@@ -71,7 +66,7 @@ const OrderScreen = () => {
               <h2>Shipping</h2>
               <Row>
                 <Col md={4}>Status:</Col>
-                <Col md={8}>{capitalizedOrderStatus}</Col>
+                <Col md={8}>{capitalize(order.orderStatus)}</Col>
               </Row>
               <Row>
                 <Col md={4}>Address:</Col>
