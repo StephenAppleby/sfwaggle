@@ -42,10 +42,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     cart_items = models.ManyToManyField(CartItem)
 
-    favourite_color = models.CharField(
-        "favourite color", max_length=64, default="", blank=True
-    )
-
     objects = CustomUserManager()
 
     EMAIL_FIELD = "email"
