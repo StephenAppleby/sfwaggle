@@ -16,7 +16,7 @@ const Dog = ({ dog }) => {
           </Card.Title>
         </Link>
         <Card.Text as="div">
-          <FloofDisplay value={dog.floofs} />
+          <FloofDisplay value={dog.floofs} dogPk={dog.pk} />
         </Card.Text>
         <Card.Text as="h3">${dog.price}</Card.Text>
       </Card.Body>

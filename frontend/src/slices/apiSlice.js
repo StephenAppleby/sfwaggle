@@ -79,12 +79,6 @@ export const sfwaggleApi = createApi({
     fetchUserInfo: builder.query({
       query: () => ({ url: "dj-rest-auth/user/" }),
       providesTags: ["userInfo", "authenticationRequried"],
-      transformResponse: (info) => {
-        return {
-          email: info.email,
-          favouriteColor: info.favourite_color,
-        }
-      },
     }),
     updateUserInfo: builder.mutation({
       query: (data) => ({

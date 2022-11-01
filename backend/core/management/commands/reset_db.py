@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from products.models import Product, Category, Brand
 from transactions.models import Order, OrderItem, PostalAddress
+from dogs.models import Dog
 from core.fixtures import FixtureLoader
 
 
@@ -19,6 +20,7 @@ class Command(BaseCommand):
         Order.objects.all().delete()
         OrderItem.objects.all().delete()
         PostalAddress.objects.all().delete()
+        Dog.objects.all().delete()
         self.stdout.write(
             self.style.SUCCESS("Successfully deleted all data from database")
         )

@@ -24,7 +24,6 @@ const CartScreen = () => {
   } = useFetchCartQuery()
 
   const [updateCartItem] = useUpdateCartItemMutation()
-  console.log(cartItems)
 
   return (
     <>
