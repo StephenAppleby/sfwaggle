@@ -27,7 +27,7 @@ export const sfwaggleApi = createApi({
       return headers
     },
   }),
-  tagTypes: ["userInfo", "cart", "authenticationRequried", "orders"],
+  tagTypes: ["userInfo", "cart", "authenticationRequried", "orders", "dog"],
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (body) => ({
@@ -65,8 +65,15 @@ export const sfwaggleApi = createApi({
     }),
     fetchDogs: builder.query({
       query: () => ({ url: "dogs/" }),
+      providesTags: ["dog"],
     }),
-    fetchDog: builder.query({ query: (pk) => ({ url: `dogs/${pk}` }) }),
+    fetchDog: builder.query({
+      query: (pk) => ({ url: `dogs/${pk}` }),
+      providesTags: ["dog"],
+    }),
+    floofDogToggle: builder.mutation({
+      query: (pk) => ({ url: `floof/${pk}/`, method: "PATCH" }),
+    }),
     fetchProducts: builder.query({
       query: () => ({ url: "products/" }),
       transformResponse: (products) =>
@@ -128,6 +135,7 @@ export const {
   useLogoutMutation,
   useFetchDogsQuery,
   useFetchDogQuery,
+  useFloofDogToggleMutation,
   useFetchProductsQuery,
   useFetchProductQuery,
   useFetchUserInfoQuery,

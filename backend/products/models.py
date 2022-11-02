@@ -25,7 +25,6 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     count_in_stock = models.PositiveSmallIntegerField()
-    # rating and numReviews can be calculated programatically once we implement reviews
 
     def __str__(self):
         return str(self.name)

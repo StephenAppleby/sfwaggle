@@ -37,6 +37,10 @@ const HomeScreen = () => {
             but in order to really get to know them, or to make inquiries,
             please visit our store.
           </p>
+          <p>
+            If you love the look of one of our fluffy heros, you can show your
+            affection by leaving a floof!
+          </p>
         </ListGroup.Item>
         {dogsIsFetching && <LoadingSpinner />}
         {dogsIsError && <Message error={dogsError} />}
@@ -44,7 +48,7 @@ const HomeScreen = () => {
           <ListGroup.Item>
             <Row>
               {top3doggos.map((dog) => (
-                <Col key={dog._id} sm={12} md={6} lg={4} xl={3}>
+                <Col key={dog.pk} sm={12} md={6} lg={4} xl={3}>
                   <Dog dog={dog} />
                 </Col>
               ))}
