@@ -5,10 +5,12 @@ import {
   useFetchUserInfoQuery,
   useFloofDogToggleMutation,
 } from "../slices/apiSlice"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const FloofDisplay = ({ value, dogPk }) => {
-  const [floofs, setFloofs] = useState(value)
-  const [color, setColor] = useState("#B84")
+  const navigate = useNavigate()
+  const location = useLocation()
+
   const token = useSelector((state) => state.account.token)
 
   const skip = !token ? true : false
@@ -18,30 +20,31 @@ const FloofDisplay = ({ value, dogPk }) => {
     { skip }
   )
 
-  const [floofDogToggle, { data: floofMessage, isSuccess: floofSuccess }] =
-    useFloofDogToggleMutation()
+  const unfloofedColor = "#B84"
+  const floofedColor = "#B30"
 
-  useEffect(() => {
-    if (userInfoSuccess) {
-      if (userInfo.dogsFloofed.includes(dogPk)) {
-        setColor("#B30")
-      }
+  let color = unfloofedColor
+
+  if (userInfoSuccess) {
+    if (userInfo.dogsFloofed.includes(dogPk)) {
+      color = floofedColor
     }
-    if (floofSuccess) {
-      if (floofMessage === "Floof removed") {
-        setFloofs(floofs - 1)
-        setColor("#B84")
-      } else if (floofMessage === "Floof added") {
-        setFloofs(floofs + 1)
-        setColor("#B30")
-      }
+  }
+
+  const [floofDogToggle] = useFloofDogToggleMutation()
+
+  const handleFloof = () => {
+    if (token) {
+      floofDogToggle(dogPk)
+    } else {
+      navigate(`/login?redirect=${location.pathname}`)
     }
-  }, [floofSuccess, floofMessage, userInfoSuccess, userInfo])
+  }
 
   return (
-    <div className="floofDisplay" onClick={() => floofDogToggle(dogPk)}>
+    <div className="floofDisplay" onClick={handleFloof}>
       <span>
-        <i style={{ color }} className="fa-solid fa-paw" /> {floofs} floofs
+        <i style={{ color }} className="fa-solid fa-paw" /> {value} floofs
       </span>
     </div>
   )

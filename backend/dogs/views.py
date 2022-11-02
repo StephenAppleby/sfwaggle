@@ -9,7 +9,7 @@ from .models import Dog
 
 class DogListView(APIView):
     def get(self, request):
-        serializer = DogSerializer(Dog.objects.all(), many=True)
+        serializer = DogSerializer(Dog.objects.all().order_by("price"), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

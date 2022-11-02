@@ -73,6 +73,7 @@ export const sfwaggleApi = createApi({
     }),
     floofDogToggle: builder.mutation({
       query: (pk) => ({ url: `floof/${pk}/`, method: "PATCH" }),
+      invalidatesTags: ["dog", "userInfo"],
     }),
     fetchProducts: builder.query({
       query: () => ({ url: "products/" }),
