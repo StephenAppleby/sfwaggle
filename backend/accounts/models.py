@@ -55,3 +55,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def clean(self):
         super().clean()
         self.email = self.__class__.objects.normalize_email(self.email)
+
+    def get_products_eligible_for_review(self):
+        products = set()
+        for order in self.orders:
+            if order.order_status == "DE":
+                products.update([item.product for item in order.items])
+        return products

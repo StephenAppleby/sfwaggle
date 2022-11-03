@@ -1,6 +1,9 @@
+import random
 from django.contrib.auth import get_user_model
 from products.models import Product, Category, Brand
 from dogs.models import Dog
+from .fixture_usernames import usernames
+from transactions.models import Order, OrderItem, PostalAddress
 
 
 class FixtureLoader:
@@ -143,13 +146,42 @@ class FixtureLoader:
     @classmethod
     def load_users(cls):
         cls.users = []
-        for usernumber in range(32):
-            email = f"fixtureuser{usernumber}@email.com"
+        for x in range(32):
+            email = f"{usernames[x]}@email.com"
             cls.users.append(
                 get_user_model().objects.create_user(
                     email=email, password="testpass123"
                 )
             )
+
+    @classmethod
+    def load_orders(cls):
+        cls.orders = []
+        order_status_choices = ["PE", "DE"]
+        postal_address = {
+            "address": "fish",
+            "postal_code": "fish",
+            "city": "fish",
+            "country": "fish",
+        }
+        for x in range(20):
+            order = Order(
+                submitted_by=cls.users[x],
+                payment_status="FP",
+                order_status=order_status_choices[x % 2],
+            )
+            order.save()
+            PostalAddress.objects.create(order=order, **postal_address)
+            products = [*cls.products.values()]
+            for y in range(4):
+                product = random.choice(products)
+                products.remove(product)
+                order_item = OrderItem.objects.create(
+                    order=order, product=product, qty=(y + 1)
+                )
+                order.items.add(order_item)
+            order.save()
+            cls.orders.append(order)
 
     @classmethod
     def load_floofs(cls):
@@ -179,4 +211,5 @@ class FixtureLoader:
         cls.load_products()
         cls.load_dogs()
         cls.load_users()
+        cls.load_orders()
         cls.load_floofs()

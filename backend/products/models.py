@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.conf import settings
 
 
 class Brand(models.Model):
@@ -36,3 +37,17 @@ class CartItem(models.Model):
 
     def __str__(self):
         return str(self.product.name)
+
+
+class Review(models.Model):
+    body = models.TextField()
+    rating = models.PositiveSmallIntegerField()
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="reviews"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reviews"
+    )
+
+    def __str__(self):
+        return str(self.body)[0:10]
