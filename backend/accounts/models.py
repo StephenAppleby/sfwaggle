@@ -58,7 +58,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def get_products_eligible_for_review(self):
         products = set()
-        for order in self.orders:
+        for order in self.orders.all():
             if order.order_status == "DE":
-                products.update([item.product for item in order.items])
+                products.update([item.product for item in order.items.all()])
         return products

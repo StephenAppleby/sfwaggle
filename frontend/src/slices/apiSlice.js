@@ -68,7 +68,7 @@ export const sfwaggleApi = createApi({
       providesTags: ["dog"],
     }),
     fetchDog: builder.query({
-      query: (pk) => ({ url: `dogs/${pk}` }),
+      query: (pk) => ({ url: `dogs/${pk}/` }),
       providesTags: ["dog"],
     }),
     floofDogToggle: builder.mutation({

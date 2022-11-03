@@ -1,6 +1,6 @@
 import random
 from django.contrib.auth import get_user_model
-from products.models import Product, Category, Brand
+from products.models import Product, Category, Brand, Review
 from dogs.models import Dog
 from .fixture_usernames import usernames
 from transactions.models import Order, OrderItem, PostalAddress
@@ -184,6 +184,89 @@ class FixtureLoader:
             cls.orders.append(order)
 
     @classmethod
+    def load_reviews(cls):
+        review_bodies = [
+            # 0/5
+            [
+                "Not worth spending money on",
+                "Broke first time I gave it to my dog",
+                "The color was wrong",
+                "Terrible quality",
+            ],
+            # 1/5
+            [
+                "My dog never plays with it",
+                "Much too expensive for what it is",
+                "Poor quality",
+            ],
+            # 2/5
+            [
+                "It's pretty cheap materials, but my dog seems ok with it",
+                "Not great, fell to pieces in a couple of days",
+                "Not sure if my dog enjoyed this toy, it disappeared after a few hours",
+                "The product smells kinda funny...",
+            ],
+            # 3/5
+            [
+                "My dogs fight over who gets to play first. But cheap materials",
+                "Great quality, but arrived several days late",
+                "I ordered five of these and they lasted a couple of days each. Not bad",
+                "Still finding pieces behind my couch several months later...",
+                "Not bad",
+            ],
+            # 4/5
+            [
+                "Can recommend",
+                "Pretty good",
+                "Great fun to watch my dogs fighting over these toys",
+                "My little Sebastian had a great time chewing and playing with this toy, until our dog Brutus came and took it from him =*(",
+                "Good quality, I've bought several products from Sfwaggle and they always come on time.",
+                "Good enough, but a little tacky",
+            ],
+            # 5/5
+            [
+                "Great quality, really good service and help from the team at Sfwaggle",
+                "I keep coming back to these, my dogs can't get enough!",
+                "=D",
+                "My dogs love these toys, they're always so excited when they see we have a new box from Sfwaggle",
+                "Good quality, just what I ordered",
+                "Recommended",
+                "Always the best products",
+                "Dogs love these, can recommend",
+                "So glad I found Sfwaggle! Fantastic quality",
+                "Thumbs up",
+                "Bought these 4 times now, they only last a few days as my dogs tear them to pieces, but keeps the occupied",
+            ],
+        ]
+
+        review_ratings = [0] * 2 + [1] * 2 + [2] * 3 + [3] * 4 + [4] * 5 + [5] * 10
+        cls.reviews = []
+
+        # print("LOAD REVIEWS")
+        for user in cls.users:
+            # print("USER: " + user)
+            for product in user.get_products_eligible_for_review():
+                # print("PRODUCT: " + product)
+                # Half eligible products get reviews
+                if random.randrange(2) % 2 == 0:
+                    rating = random.choice(review_ratings)
+                    # Half reviews get bodies
+                    body = (
+                        random.choice(review_bodies[rating])
+                        if random.randrange(2) % 2 == 0
+                        else ""
+                    )
+                    # print("REVIEW: " + rating + body)
+                    cls.reviews.append(
+                        Review.objects.create(
+                            body=body, rating=rating, product=product, user=user
+                        )
+                    )
+                    # print(cls.reviews[-1])
+                product.save()
+            user.save()
+
+    @classmethod
     def load_floofs(cls):
         for x in range(12):
             cls.dogs["Berno"].floofs.add(cls.users[x])
@@ -212,4 +295,5 @@ class FixtureLoader:
         cls.load_dogs()
         cls.load_users()
         cls.load_orders()
+        cls.load_reviews()
         cls.load_floofs()

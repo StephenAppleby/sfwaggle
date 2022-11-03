@@ -30,6 +30,13 @@ class Product(models.Model):
     def __str__(self):
         return str(self.name)
 
+    def get_rating(self):
+        review_ratings = [review.rating for review in self.reviews.all()]
+        if len(review_ratings) > 0:
+            return round(sum(review_ratings) / len(review_ratings) * 2) / 2
+        else:
+            return None
+
 
 class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -40,7 +47,7 @@ class CartItem(models.Model):
 
 
 class Review(models.Model):
-    body = models.TextField()
+    body = models.TextField(blank=True)
     rating = models.PositiveSmallIntegerField()
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="reviews"

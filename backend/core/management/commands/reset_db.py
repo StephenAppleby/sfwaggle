@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from products.models import Product, Category, Brand
+from products.models import Product, Category, Brand, Review
 from transactions.models import Order, OrderItem, PostalAddress
 from dogs.models import Dog
 from core.fixtures import FixtureLoader
@@ -17,6 +17,7 @@ class Command(BaseCommand):
         Product.objects.all().delete()
         Category.objects.all().delete()
         Brand.objects.all().delete()
+        Review.objects.all().delete()
         Order.objects.all().delete()
         OrderItem.objects.all().delete()
         PostalAddress.objects.all().delete()
