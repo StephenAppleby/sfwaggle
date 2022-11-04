@@ -24,7 +24,7 @@ const Rating = ({ rating, numReviews }) => {
       {get_star(3)}
       {get_star(4)}
       {get_star(5)}
-      <span> out of {numReviews} ratings</span>
+      {numReviews && <span> out of {numReviews} ratings</span>}
     </div>
   )
 }

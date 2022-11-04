@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from .models import CartItem, Product
-from .serializers import CartItemSerializer, ProductSerializer
+from .serializers import CartItemSerializer, ProductSerializer, ReviewSerializer
 from rest_framework import status
 
 
@@ -23,6 +23,23 @@ class ProductView(APIView):
             return Response(serializer.data)
         except Product.DoesNotExist as e:
             raise Http404(e)
+
+
+class ReviewView(APIView):
+    def post(self, request):
+        product = Product.objects.get(pk=request.data["product"])
+        if product not in request.user.get_products_eligible_for_review():
+            raise ValidationError(
+                "You are not eligible to review this product. "
+                "Only users who have purchased products may review them."
+            )
+        serializer = ReviewSerializer(data=request.data, context={"request": request})
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response("Review submitted", status=status.HTTP_200_OK)
+        else:
+            raise ValidationError(serializer.errors)
 
 
 class CartView(APIView):

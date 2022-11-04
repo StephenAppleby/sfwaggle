@@ -242,11 +242,8 @@ class FixtureLoader:
         review_ratings = [0] * 2 + [1] * 2 + [2] * 3 + [3] * 4 + [4] * 5 + [5] * 10
         cls.reviews = []
 
-        # print("LOAD REVIEWS")
         for user in cls.users:
-            # print("USER: " + user)
             for product in user.get_products_eligible_for_review():
-                # print("PRODUCT: " + product)
                 # Half eligible products get reviews
                 if random.randrange(2) % 2 == 0:
                     rating = random.choice(review_ratings)
@@ -256,13 +253,11 @@ class FixtureLoader:
                         if random.randrange(2) % 2 == 0
                         else ""
                     )
-                    # print("REVIEW: " + rating + body)
                     cls.reviews.append(
                         Review.objects.create(
                             body=body, rating=rating, product=product, user=user
                         )
                     )
-                    # print(cls.reviews[-1])
                 product.save()
             user.save()
 

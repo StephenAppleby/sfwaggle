@@ -27,7 +27,14 @@ export const sfwaggleApi = createApi({
       return headers
     },
   }),
-  tagTypes: ["userInfo", "cart", "authenticationRequried", "orders", "dog"],
+  tagTypes: [
+    "userInfo",
+    "products",
+    "cart",
+    "authenticationRequried",
+    "orders",
+    "dog",
+  ],
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (body) => ({
@@ -77,12 +84,18 @@ export const sfwaggleApi = createApi({
     }),
     fetchProducts: builder.query({
       query: () => ({ url: "products/" }),
+      providesTags: ["products"],
       transformResponse: (products) =>
         convertProductListPriceToNumber(products),
     }),
     fetchProduct: builder.query({
       query: (pk) => ({ url: `product/${pk}/` }),
+      providesTags: ["products"],
       transformResponse: (product) => convertProductPriceToNumber(product),
+    }),
+    submitReview: builder.mutation({
+      query: (data) => ({ url: "reviews/", method: "POST", body: data }),
+      invalidatesTags: ["products"],
     }),
     fetchUserInfo: builder.query({
       query: () => ({ url: "dj-rest-auth/user/" }),
@@ -139,6 +152,7 @@ export const {
   useFloofDogToggleMutation,
   useFetchProductsQuery,
   useFetchProductQuery,
+  useSubmitReviewMutation,
   useFetchUserInfoQuery,
   useUpdateUserInfoMutation,
   useFetchCartQuery,
