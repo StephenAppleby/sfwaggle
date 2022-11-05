@@ -157,7 +157,7 @@ class FixtureLoader:
     @classmethod
     def load_orders(cls):
         cls.orders = []
-        order_status_choices = ["PE", "DE"]
+        order_status_choices = ["PE", "DE", "DE", "DE"]
         postal_address = {
             "address": "fish",
             "postal_code": "fish",
@@ -168,12 +168,12 @@ class FixtureLoader:
             order = Order(
                 submitted_by=cls.users[x],
                 payment_status="FP",
-                order_status=order_status_choices[x % 2],
+                order_status=order_status_choices[x % 4],
             )
             order.save()
             PostalAddress.objects.create(order=order, **postal_address)
             products = [*cls.products.values()]
-            for y in range(4):
+            for y in range(6):
                 product = random.choice(products)
                 products.remove(product)
                 order_item = OrderItem.objects.create(
