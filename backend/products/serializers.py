@@ -19,6 +19,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         validated_data["user"] = self.context["request"].user
         return super().create(validated_data)
 
+    def update(self, instance, validated_data):
+        instance.rating = validated_data.get("rating", instance.rating)
+        instance.body = validated_data.get("body", instance.body)
+        return super().update(instance, validated_data)
+
     class Meta:
         model = Review
         fields = ["body", "rating", "product", "user"]

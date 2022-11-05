@@ -19,6 +19,7 @@ class OrderViewSet(viewsets.ViewSet):
         serializer = OrderSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
+            request.user.cart_items.all().delete()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             raise ValidationError(serializer.errors)

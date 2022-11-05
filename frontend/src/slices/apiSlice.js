@@ -97,6 +97,10 @@ export const sfwaggleApi = createApi({
       query: (data) => ({ url: "reviews/", method: "POST", body: data }),
       invalidatesTags: ["products"],
     }),
+    updateReview: builder.mutation({
+      query: (data) => ({ url: "reviews/", method: "PATCH", body: data }),
+      invalidatesTags: ["products"],
+    }),
     fetchUserInfo: builder.query({
       query: () => ({ url: "dj-rest-auth/user/" }),
       providesTags: ["userInfo", "authenticationRequried"],
@@ -131,6 +135,7 @@ export const sfwaggleApi = createApi({
         method: "POST",
         body: body,
       }),
+      invalidatesTags: ["cart"],
     }),
     listOrders: builder.query({
       query: () => ({ url: "orders/" }),
@@ -153,6 +158,7 @@ export const {
   useFetchProductsQuery,
   useFetchProductQuery,
   useSubmitReviewMutation,
+  useUpdateReviewMutation,
   useFetchUserInfoQuery,
   useUpdateUserInfoMutation,
   useFetchCartQuery,

@@ -4,14 +4,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from .models import CartItem, Product
+from .models import CartItem, Product, Review
 from .serializers import CartItemSerializer, ProductSerializer, ReviewSerializer
 from rest_framework import status
 
 
 class ProductListView(APIView):
     def get(self, request):
-        # Will need to paginate
         serializer = ProductSerializer(Product.objects.all(), many=True)
         return Response(serializer.data)
 
@@ -38,6 +37,16 @@ class ReviewView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response("Review submitted", status=status.HTTP_200_OK)
+        else:
+            raise ValidationError(serializer.errors)
+
+    def patch(self, request):
+        product = Product.objects.get(pk=request.data["product"])
+        review = Review.objects.get(user=request.user, product=product)
+        serializer = ReviewSerializer(review, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response("Review updated", status=status.HTTP_200_OK)
         else:
             raise ValidationError(serializer.errors)
 

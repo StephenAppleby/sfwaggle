@@ -24,7 +24,10 @@ const Rating = ({ rating, numReviews }) => {
       {get_star(3)}
       {get_star(4)}
       {get_star(5)}
-      {numReviews && <span> out of {numReviews} ratings</span>}
+      {numReviews !== null && numReviews > 0 && (
+        <span> out of {numReviews} ratings</span>
+      )}
+      {numReviews !== null && numReviews === 0 && <span> No reviews yet</span>}
     </div>
   )
 }

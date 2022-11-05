@@ -10,6 +10,7 @@ import {
   useFetchProductQuery,
   useFetchUserInfoQuery,
   useSubmitReviewMutation,
+  useUpdateReviewMutation,
 } from "../slices/apiSlice"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
@@ -17,6 +18,7 @@ import { useEffect } from "react"
 const ProductScreen = () => {
   const [qty, setQty] = useState(1)
   const [message, setMessage] = useState("")
+  const [reviewMessage, setReviewMessage] = useState("")
   const [reviewRating, setReviewRating] = useState(0)
   const [reviewBody, setReviewBody] = useState("")
 
@@ -32,6 +34,8 @@ const ProductScreen = () => {
     isError,
     error,
   } = useFetchProductQuery(params.pk)
+
+  const reviews = productSuccess ? [...product.reviews] : []
 
   const token = useSelector((state) => state.account.token)
 
@@ -49,10 +53,19 @@ const ProductScreen = () => {
 
   const userHasReview =
     userInfoSuccess && productSuccess
-      ? product.reviews
+      ? reviews
           .map((review) => review.user)
           .some((user) => user === userInfo.email.split("@")[0])
       : false
+
+  const userReview = userHasReview
+    ? reviews.splice(
+        reviews.findIndex(
+          (review) => review.user === userInfo.email.split("@")[0]
+        ),
+        1
+      )[0]
+    : null
 
   const { data: cartItems, isSuccess: cartSuccess } = useFetchCartQuery()
 
@@ -61,16 +74,14 @@ const ProductScreen = () => {
     productSuccess &&
     cartItems.some((item) => item.product.pk === product.pk)
 
-  useEffect(() => {
-    if (inCart) {
-      setQty(cartItems.find((item) => item.product.pk === product.pk).qty)
-    }
-  }, [inCart])
-
   const [addToCart] = useAddToCartMutation()
   const [
     submitReview,
-    { isError: submitReviewIsError, error: submitReviewError },
+    {
+      isSuccess: submitReviewSuccess,
+      isError: submitReviewIsError,
+      error: submitReviewError,
+    },
   ] = useSubmitReviewMutation()
 
   const handleReviewSubmit = (e) => {
@@ -80,8 +91,47 @@ const ProductScreen = () => {
       data.body = reviewBody
     }
     dispatch(submitReview(data))
-    setMessage("Review submitted")
   }
+
+  const [
+    updateReview,
+    {
+      isSuccess: updateReviewSuccess,
+      isError: updateReviewIsError,
+      error: updateReviewError,
+    },
+  ] = useUpdateReviewMutation()
+
+  const handleReviewUpdate = (e) => {
+    e.preventDefault()
+    const data = { rating: reviewRating, product: product.pk }
+    if (reviewBody) {
+      data.body = reviewBody
+    }
+    dispatch(updateReview(data))
+  }
+
+  useEffect(() => {
+    if (inCart) {
+      setQty(cartItems.find((item) => item.product.pk === product.pk).qty)
+    }
+    if (userHasReview) {
+      setReviewBody(userReview.body)
+      setReviewRating(userReview.rating)
+    }
+    if (submitReviewSuccess) {
+      setReviewMessage("Review submitted")
+    }
+    if (updateReviewSuccess) {
+      setReviewMessage("Review updated")
+    }
+  }, [
+    inCart,
+    userHasReview,
+    userReview,
+    submitReviewSuccess,
+    updateReviewSuccess,
+  ])
 
   return (
     <>
@@ -104,10 +154,7 @@ const ProductScreen = () => {
                 <ListGroup.Item>Brand: {product.brand}</ListGroup.Item>
                 <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
                 <ListGroup.Item>
-                  <Rating
-                    rating={product.rating}
-                    numReviews={product.reviews.length}
-                  />
+                  <Rating rating={product.rating} numReviews={reviews.length} />
                 </ListGroup.Item>
                 <ListGroup.Item>{product.description}</ListGroup.Item>
               </ListGroup>
@@ -202,20 +249,20 @@ const ProductScreen = () => {
           <Row>
             <h2>Reviews</h2>
             {submitReviewIsError && <Message error={submitReviewError} />}
-            {product.reviews.length === 0 && <p>No reviews yet</p>}
+            {updateReviewIsError && <Message error={updateReviewError} />}
+            {reviewMessage && <Message>{reviewMessage}</Message>}
+            {reviews.length === 0 && <p>No reviews yet</p>}
             <ListGroup>
-              {userEligibleToReview && !userHasReview && (
+              {userHasReview && (
                 <ListGroup.Item>
-                  <p>
-                    You have purchased this item and are eligible to leave a
-                    review!
-                  </p>
-                  <Form onSubmit={handleReviewSubmit}>
+                  <p>You left a review: </p>
+                  <Form onSubmit={handleReviewUpdate}>
                     <Form.Group controlId="reviewRating">
                       <Form.Label>Rating</Form.Label>
                       <Form.Control
                         as="select"
                         value={reviewRating}
+                        disabled={!userHasReview}
                         onChange={(e) => setReviewRating(e.target.value)}
                       >
                         {[0, 1, 2, 3, 4, 5].map((x) => (
@@ -229,6 +276,45 @@ const ProductScreen = () => {
                       <Form.Label>Review text (optional)</Form.Label>
                       <Form.Control
                         as="textarea"
+                        value={reviewBody}
+                        disabled={!userHasReview}
+                        rows={5}
+                        onChange={(e) => setReviewBody(e.target.value)}
+                      ></Form.Control>
+                    </Form.Group>
+                    <Button className="my-3" type="submit" variant="primary">
+                      Update
+                    </Button>
+                  </Form>
+                </ListGroup.Item>
+              )}
+              {userEligibleToReview && !userHasReview && (
+                <ListGroup.Item>
+                  <p>
+                    You have purchased this item and are eligible to leave a
+                    review!
+                  </p>
+                  <Form onSubmit={handleReviewSubmit}>
+                    <Form.Group controlId="reviewRating">
+                      <Form.Label>Rating</Form.Label>
+                      <Form.Control
+                        as="select"
+                        value={reviewRating}
+                        disabled={userHasReview}
+                        onChange={(e) => setReviewRating(e.target.value)}
+                      >
+                        {[0, 1, 2, 3, 4, 5].map((x) => (
+                          <option key={x} value={x}>
+                            {x}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
+                    <Form.Group controlId="reviewBody">
+                      <Form.Label>Review text (optional)</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        disabled={userHasReview}
                         rows={5}
                         onChange={(e) => setReviewBody(e.target.value)}
                       ></Form.Control>
@@ -239,7 +325,7 @@ const ProductScreen = () => {
                   </Form>
                 </ListGroup.Item>
               )}
-              {product.reviews
+              {reviews
                 .filter((review) => review.body)
                 .map((review, index) => (
                   <ListGroup.Item key={index}>
