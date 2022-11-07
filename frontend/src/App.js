@@ -17,6 +17,7 @@ import { useSelector } from "react-redux"
 import WrongWayScreen from "./screens/WrongWayScreen"
 import OrderScreen from "./screens/OrderScreen"
 import OrderListScreen from "./screens/OrderListScreen"
+import AboutScreen from "./screens/AboutScreen"
 
 function App() {
   const token = useSelector((state) => state.account.token)
@@ -38,6 +39,7 @@ function App() {
           <Routes>
             // Public routes
             <Route path="/" element={<HomeScreen />} />
+            <Route path="/about" element={<AboutScreen />} />
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/register" element={<RegisterScreen />} />
             <Route path="/dogs" element={<DogListScreen />} />

@@ -48,19 +48,23 @@ const Header = () => {
             <Nav className="ms-auto">
               <LinkContainer to="/products">
                 <Nav.Link>
-                  <i className="fa-solid fa-bone"></i>Products
+                  <i className="fa-solid fa-bone"></i> Products
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/dogs">
                 <Nav.Link>
-                  <i className="fa-solid fa-dog"></i>Dogs
+                  <i className="fa-solid fa-dog"></i> Dogs
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/cart">
                 <Nav.Link>
-                  <i className="fas fa-shopping-cart"></i>
-                  Cart
+                  <i className="fas fa-shopping-cart"></i> Cart
                   {cartSuccess ? `(${cartItems.length})` : 0}
+                </Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/about">
+                <Nav.Link>
+                  <i className="fa-sharp fa-solid fa-book"></i> About
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/login">
