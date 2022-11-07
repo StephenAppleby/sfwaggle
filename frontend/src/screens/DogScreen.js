@@ -18,8 +18,6 @@ const DogScreen = () => {
     error,
   } = useFetchDogQuery(params.id)
 
-  console.log(dog)
-
   return (
     <>
       {isFetching && <LoadingSpinner />}
@@ -39,7 +37,7 @@ const DogScreen = () => {
                   <h3>{dog.name}</h3>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  <FloofDisplay value={dog.floofs} />
+                  <FloofDisplay value={dog.floofs} dogPk={dog.pk} />
                 </ListGroup.Item>
                 <ListGroup.Item>Price: ${dog.price}</ListGroup.Item>
                 <ListGroup.Item>{dog.description}</ListGroup.Item>
