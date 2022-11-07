@@ -1,12 +1,16 @@
-import React from "react"
+import React, { useState } from "react"
 import { ListGroup } from "react-bootstrap"
 import { useSelector } from "react-redux"
 import { useFetchUserInfoQuery } from "../slices/apiSlice"
+import Message from "./Message"
 import Review from "./Review"
 import ReviewSubmit from "./ReviewSubmit"
 import ReviewUpdate from "./ReviewUpdate"
 
 const ReviewSection = ({ product }) => {
+  const [message, setMessage] = useState({ text: "", variant: "", error: null })
+  const [showUpdate, setShowUpdate] = useState(false)
+
   const reviews = [...product.reviews]
 
   const token = useSelector((state) => state.account.token)
@@ -40,13 +44,34 @@ const ReviewSection = ({ product }) => {
   return (
     <>
       <h2>Reviews</h2>
+      {message.text !== "" || message.error !== null ? (
+        <Message error={message.error} variant={message.variant}>
+          {message.text}
+        </Message>
+      ) : (
+        <></>
+      )}
       {reviews.length === 0 && <p>No reviews yet</p>}
       <ListGroup>
-        {userHasReview && (
-          <ReviewUpdate product={product} review={userReview} />
-        )}
         {userEligibleToReview && !userHasReview && (
-          <ReviewSubmit product={product} />
+          <ReviewSubmit setMessage={setMessage} product={product} />
+        )}
+        {userHasReview && showUpdate && (
+          <ReviewUpdate
+            product={product}
+            setMessage={setMessage}
+            review={userReview}
+            setShowUpdate={setShowUpdate}
+          />
+        )}
+        {userHasReview && !showUpdate && (
+          <Review
+            product={product}
+            setMessage={setMessage}
+            review={userReview}
+            isUserReview={true}
+            setShowUpdate={setShowUpdate}
+          />
         )}
         {reviews
           .filter((review) => review.body)

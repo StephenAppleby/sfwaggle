@@ -101,6 +101,10 @@ export const sfwaggleApi = createApi({
       query: (data) => ({ url: "reviews/", method: "PATCH", body: data }),
       invalidatesTags: ["products"],
     }),
+    deleteReview: builder.mutation({
+      query: (data) => ({ url: "reviews/", method: "DELETE", body: data }),
+      invalidatesTags: ["products"],
+    }),
     fetchUserInfo: builder.query({
       query: () => ({ url: "dj-rest-auth/user/" }),
       providesTags: ["userInfo", "authenticationRequried"],
@@ -159,6 +163,7 @@ export const {
   useFetchProductQuery,
   useSubmitReviewMutation,
   useUpdateReviewMutation,
+  useDeleteReviewMutation,
   useFetchUserInfoQuery,
   useUpdateUserInfoMutation,
   useFetchCartQuery,

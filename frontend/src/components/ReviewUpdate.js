@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react"
 import { Button, Form, ListGroup } from "react-bootstrap"
 import { useDispatch } from "react-redux"
 import { useUpdateReviewMutation } from "../slices/apiSlice"
-import Message from "./Message"
+import DeleteReviewButton from "./DeleteReviewButton"
 
-const ReviewUpdate = ({ product, review }) => {
+const ReviewUpdate = ({ product, review, setMessage, setShowUpdate }) => {
   const dispatch = useDispatch()
 
-  const [message, setMessage] = useState({ text: "", variant: "", error: null })
   const [reviewRating, setReviewRating] = useState(review.rating)
   const [reviewBody, setReviewBody] = useState(review.body)
 
@@ -31,6 +30,7 @@ const ReviewUpdate = ({ product, review }) => {
 
   useEffect(() => {
     if (updateReviewSuccess) {
+      setShowUpdate(false)
       setMessage({ text: "Review updated", variant: "success", error: null })
     }
     if (updateReviewIsError) {
@@ -40,12 +40,6 @@ const ReviewUpdate = ({ product, review }) => {
 
   return (
     <ListGroup.Item>
-      {message.body ||
-        (message.error && (
-          <Message error={message.error} variant={message.variant}>
-            {message.body}
-          </Message>
-        ))}
       <p>You left a review: </p>
       <Form onSubmit={handleReviewUpdate}>
         <Form.Group controlId="reviewRating">
@@ -74,6 +68,7 @@ const ReviewUpdate = ({ product, review }) => {
         <Button className="my-3" type="submit" variant="primary">
           Update
         </Button>
+        <DeleteReviewButton product={product} setMessage={setMessage} />
       </Form>
     </ListGroup.Item>
   )

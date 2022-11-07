@@ -50,6 +50,15 @@ class ReviewView(APIView):
         else:
             raise ValidationError(serializer.errors)
 
+    def delete(self, request):
+        try:
+            product = Product.objects.get(pk=request.data["product"])
+            review = Review.objects.get(user=request.user, product=product)
+            review.delete()
+            return Response("Review deleted", status=status.HTTP_200_OK)
+        except Review.DoesNotExist as e:
+            raise ValidationError(e)
+
 
 class CartView(APIView):
     permission_classes = [IsAuthenticated]

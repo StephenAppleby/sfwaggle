@@ -4,10 +4,9 @@ import { useDispatch } from "react-redux"
 import { useSubmitReviewMutation } from "../slices/apiSlice"
 import Message from "./Message"
 
-const ReviewSubmit = ({ product }) => {
+const ReviewSubmit = ({ product, setMessage }) => {
   const dispatch = useDispatch()
 
-  const [message, setMessage] = useState("")
   const [reviewRating, setReviewRating] = useState(0)
   const [reviewBody, setReviewBody] = useState("")
 
@@ -40,12 +39,6 @@ const ReviewSubmit = ({ product }) => {
 
   return (
     <ListGroup.Item>
-      {message.body ||
-        (message.error && (
-          <Message error={message.error} variant={message.variant}>
-            {message.body}
-          </Message>
-        ))}
       <p>You have purchased this item and are eligible to leave a review!</p>
       <Form onSubmit={handleReviewSubmit}>
         <Form.Group controlId="reviewRating">
