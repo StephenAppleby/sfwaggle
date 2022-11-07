@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react"
 import { Button, Form, ListGroup } from "react-bootstrap"
 import { useDispatch } from "react-redux"
 import { useSubmitReviewMutation } from "../slices/apiSlice"
-import Message from "./Message"
 
 const ReviewSubmit = ({ product, setMessage }) => {
   const dispatch = useDispatch()
 
-  const [reviewRating, setReviewRating] = useState(0)
+  const [reviewRating, setReviewRating] = useState(null)
   const [reviewBody, setReviewBody] = useState("")
 
   const [
@@ -21,11 +20,19 @@ const ReviewSubmit = ({ product, setMessage }) => {
 
   const handleReviewSubmit = (e) => {
     e.preventDefault()
-    const data = { rating: reviewRating, product: product.pk }
-    if (reviewBody) {
-      data.body = reviewBody
+    if (reviewRating === null) {
+      setMessage({
+        text: "Please select a rating",
+        variant: "danger",
+        error: "",
+      })
+    } else {
+      const data = { rating: reviewRating, product: product.pk }
+      if (reviewBody) {
+        data.body = reviewBody
+      }
+      dispatch(submitReview(data))
     }
-    dispatch(submitReview(data))
   }
 
   useEffect(() => {
@@ -48,6 +55,9 @@ const ReviewSubmit = ({ product, setMessage }) => {
             value={reviewRating}
             onChange={(e) => setReviewRating(e.target.value)}
           >
+            <option disabled={true} selected={true} value={""}>
+              Select a rating
+            </option>
             {[0, 1, 2, 3, 4, 5].map((x) => (
               <option key={x} value={x}>
                 {x}
